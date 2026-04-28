@@ -1,0 +1,29 @@
+[project]
+name = "Fly-in"
+version = "0.1.0"
+description = "Simulation de logistique de drones avec visualisation raylib"
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "raylib>=5.0.0",
+    "pydantic>=2.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.10.0",
+    "flake8>=7.0.0",
+]
+
+# ─────────────────────────────────────────────
+#  MYPY — vérification de types statique
+# ─────────────────────────────────────────────
+[tool.mypy]
+python_version         = "3.11"
+ignore_missing_imports = true
+pretty                 = true
+show_error_codes       = true
+
+[tool.black]
+line-length = 79
