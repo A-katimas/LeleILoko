@@ -19,7 +19,7 @@ def main():
     print(flyin.connections[1])
 
     camera = Camera3D(
-        Vector3(10, 15, 10),  # position caméra
+        Vector3(10, 5, 10),  # position caméra
         Vector3(0, 0, 0),  # cible (où elle regarde)
         Vector3(0, 1, 0),  # "up" vector
         45.0,  # FOV
@@ -32,7 +32,7 @@ def main():
     draw_a_zone = draw_zone(flyin.zones)
     while not ray.window_should_close():
         ray.update_camera(
-            camera, ray.CameraMode.CAMERA_ORBITAL
+            camera, ray.CameraMode.CAMERA_FIRST_PERSON
         )  # rotation auto à la souris
 
         ray.begin_drawing()

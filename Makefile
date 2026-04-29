@@ -4,10 +4,10 @@ VENV		= .venv
 SRC			= Flyin.py
 
 TMP_DIRS	= __pycache__ .mypy_cache .ruff_cache
-#CONFIG		?= maps/easy/01_linear_path.txt
+CONFIG		?= maps/easy/01_linear_path.txt
 #CONFIG		?= maps/medium/02_circular_loop.txt
-CONFIG		?= maps/hard/03_ultimate_challenge.txt
-
+#CONFIG		?= maps/hard/03_ultimate_challenge.txt
+#CONFIG		?= maps/challenger/01_the_impossible_dream.txt
 install:
 	@echo ">>> Installation de uv..."
 	curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -52,3 +52,4 @@ fclean: clean
 	@echo ">>> FClean OK !"
 
 .PHONY: run install debug clean fclean lint lint-strict
+

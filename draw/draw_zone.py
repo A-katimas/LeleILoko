@@ -23,9 +23,16 @@ class Normal_Zone(Base_Zone):
     def drawzone(self) -> None:
         ray.draw_cube_wires(
             Vector3((self.zone.x + 2) * 1.5, (self.zone.y + 2) * 1.5, 0),
-            2,
-            2,
-            2,
+            1.5,
+            1.5,
+            1.5,
+            ray.RED,
+        )
+        ray.draw_cube(
+            Vector3((self.zone.x + 2) * 1.5, (self.zone.y + 2) * 1.5, 0),
+            1,
+            1,
+            1,
             ray.RED,
         )
 
@@ -37,9 +44,16 @@ class restricted_Zone(Base_Zone):
     def drawzone(self) -> None:
         ray.draw_cube_wires(
             Vector3((self.zone.x + 2) * 1.5, (self.zone.y + 2) * 1.5, 0),
-            2.0,
-            2.0,
-            2.0,
+            1.5,
+            1.5,
+            1.5,
+            ray.BLUE,
+        )
+        ray.draw_cube(
+            Vector3((self.zone.x + 2) * 1.5, (self.zone.y + 2) * 1.5, 0),
+            1,
+            1,
+            1,
             ray.BLUE,
         )
 
@@ -51,9 +65,16 @@ class blocked_Zone(Base_Zone):
     def drawzone(self) -> None:
         ray.draw_cube_wires(
             Vector3((self.zone.x + 2) * 1.5, (self.zone.y + 2) * 1.5, 0),
-            2,
-            2,
-            2,
+            1.5,
+            1.5,
+            1.5,
+            ray.YELLOW,
+        )
+        ray.draw_cube(
+            Vector3((self.zone.x + 2) * 1.5, (self.zone.y + 2) * 1.5, 0),
+            1,
+            1,
+            1,
             ray.YELLOW,
         )
 
@@ -65,9 +86,16 @@ class priority_Zone(Base_Zone):
     def drawzone(self) -> None:
         ray.draw_cube_wires(
             Vector3((self.zone.x + 2) * 1.5, (self.zone.y + 2) * 1.5, 0),
-            2,
-            2,
-            2,
+            1.5,
+            1.5,
+            1.5,
+            ray.PURPLE,
+        )
+        ray.draw_cube(
+            Vector3((self.zone.x + 2) * 1.5, (self.zone.y + 2) * 1.5, 0),
+            1,
+            1,
+            1,
             ray.PURPLE,
         )
 
