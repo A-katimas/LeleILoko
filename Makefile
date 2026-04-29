@@ -4,7 +4,7 @@ VENV		= .venv
 SRC			= Flyin.py
 
 TMP_DIRS	= __pycache__ .mypy_cache .ruff_cache
-
+CONFIG		?= maps/easy/01_linear_path.txt
 install:
 	@echo ">>> Installation de uv..."
 	curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -15,7 +15,7 @@ install:
 
 run:
 	@echo ">>> Lancement de la simulation..."
-	$(UV) run $(SRC)
+	$(UV) run $(SRC) $(CONFIG)
 
 
 debug:
@@ -30,7 +30,7 @@ lint:
 
 lint-strict:
 	@echo ">>> flake8 (strict)..."
-	$(UV) run flake8 --max-line-length=88 .
+	$(UV) run flake8 --max-line-length=79 .
 	@echo ">>> mypy --strict..."
 	$(UV) run mypy mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs .
 	@echo ">>> Lint strict OK !"
