@@ -3,8 +3,7 @@ from pydantic import (
     field_validator,
 )
 from use_terminal.color import color
-from typing import Optional, Dict, List
-
+from typing import Optional, Dict
 
 VALID_ZONE_TYPES = {"normal", "blocked", "restricted", "priority"}
 
@@ -58,7 +57,7 @@ class MapData(BaseModel):
         raise ValueError(f"Zone {name} not found")
 
 
-def parse_metadata(raw: str) -> dict:
+def parse_metadata(raw: str) -> Dict:
     data = {}
 
     raw = raw.strip()[1:-1]  # enlever [ ]
