@@ -1,3 +1,12 @@
+THEME_COLOR = {
+    "red": (255, 0, 0),
+    "blue": (0, 0, 255),
+    "green": (0, 255, 0),
+    "yellow": (255, 250, 200),
+    "purple": (230, 20, 255),
+}
+
+
 def color(text: str | int | None, r: int, g: int, b: int) -> str:
     """
     Apply an RGB foreground color to the given text using ANSI escape codes.

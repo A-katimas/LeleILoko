@@ -1,9 +1,6 @@
 from pydantic import (
     BaseModel,
-    Field,
-    model_validator,
     field_validator,
-    ValidationError,
 )
 from use_terminal.color import color
 from typing import Optional, Dict, List
@@ -23,13 +20,15 @@ class Zone(BaseModel):
     @field_validator("zone_type")
     def check_zone_type(cls, value: str) -> str:
         if value not in VALID_ZONE_TYPES:
-            raise ValueError(f"Invalid zone type: {value}")
+            raise ValueError(
+                color(f"Invalid zone type: {value}", 250, 100, 100)
+            )
         return value
 
     @field_validator("max_drones")
     def check_capacity(cls, value: int) -> int:
         if value <= 0:
-            raise ValueError("max_drones must be > 0")
+            raise ValueError(color("max_drones must be > 0", 250, 100, 100))
         return value
 
 
@@ -41,16 +40,22 @@ class Connection(BaseModel):
     @field_validator("capacity")
     def check_capacity(cls, value: int) -> int:
         if value <= 0:
-            raise ValueError("capacity must be > 0")
+            raise ValueError(color("capacity must be > 0", 240, 150, 150))
         return value
 
 
 class MapData(BaseModel):
     nb_drones: int
-    zones: Dict[str, Zone]
-    connections: List[Connection]
+    zones: list[Zone]
+    connections: list[Connection]
     start: str
     end: str
+
+    def get_zone(self, name: str) -> Zone:
+        for z in self.zones:
+            if z.name == name:
+                return z
+        raise ValueError(f"Zone {name} not found")
 
 
 def parse_metadata(raw: str) -> dict:
@@ -115,15 +120,18 @@ def parse_connection(line: str, line_no: int) -> Connection:
         return Connection(a=a.strip(), b=b.strip(), capacity=capacity)
 
     except Exception as e:
-        raise ValueError(f"[Line {line_no}] Invalid connection: {e}")
+        raise ValueError(
+            color(f"[Line {line_no}] Invalid connection: {e}", 255, 50, 150)
+        )
 
 
 def parse_file(path: str) -> MapData:
-    zones = {}
-    connections = []
-    start = None
-    end = None
-    nb_drones = None
+    zones: list[Zone] = []
+    connections: list[Connection] = []
+    zone_names: set[str] = set()  # ← pour les checks de doublons/validations
+    start: Optional[str] = None
+    end: Optional[str] = None
+    nb_drones: Optional[int] = None
 
     with open(path) as f:
         for i, line in enumerate(f, start=1):
@@ -138,19 +146,20 @@ def parse_file(path: str) -> MapData:
             elif line.startswith(("start_hub", "end_hub", "hub")):
                 prefix, zone = parse_zone(line, i)
 
-                if zone.name in zones:
-                    raise ValueError(f"[Line {i}] Duplicate zone {zone.name}")
+                if zone.name in zone_names:
+                    raise ValueError(f"Duplicate zone '{zone.name}'")
 
-                zones[zone.name] = zone
+                zones.append(zone)
+                zone_names.add(zone.name)
 
                 if prefix == "start_hub":
                     if start:
-                        raise ValueError("Multiple start hubs")
+                        raise ValueError(i, "Multiple start hubs")
                     start = zone.name
 
                 elif prefix == "end_hub":
                     if end:
-                        raise ValueError("Multiple end hubs")
+                        raise ValueError(i, "Multiple end hubs")
                     end = zone.name
 
             elif line.startswith("connection"):
@@ -158,17 +167,18 @@ def parse_file(path: str) -> MapData:
                 connections.append(conn)
 
             else:
-                raise ValueError(f"[Line {i}] Unknown line format")
+                raise ValueError(i, f"Unknown line format: '{line}'")
 
-    # validations finalesn
     if nb_drones is None:
-        raise ValueError("Missing nb_drones")
+        raise ValueError(0, "Missing nb_drones")
     if not start or not end:
-        raise ValueError("Missing start or end hub")
+        raise ValueError(0, "Missing start or end hub")
 
-    for conex in connections:
-        if conex.zonea not in zones or conex.zoneb not in zones:
-            raise ValueError(f"Invalid connection {conex.zonea}-{conex.zoneb}")
+    for conn in connections:
+        if conn.a not in zone_names or conn.b not in zone_names:
+            raise ValueError(
+                0, f"Unknown zone in connection '{conn.a}-{conn.b}'"
+            )
 
     return MapData(
         nb_drones=nb_drones,

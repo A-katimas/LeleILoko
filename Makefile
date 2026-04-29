@@ -4,7 +4,10 @@ VENV		= .venv
 SRC			= Flyin.py
 
 TMP_DIRS	= __pycache__ .mypy_cache .ruff_cache
-CONFIG		?= maps/easy/01_linear_path.txt
+#CONFIG		?= maps/easy/01_linear_path.txt
+CONFIG		?= maps/medium/02_circular_loop.txt
+
+
 install:
 	@echo ">>> Installation de uv..."
 	curl -LsSf https://astral.sh/uv/install.sh | sh
