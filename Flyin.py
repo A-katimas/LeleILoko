@@ -41,6 +41,8 @@ def main():
         ray.begin_mode_3d(camera)
         for i in draw_a_zone:
             i.drawzone()
+        for i in draw_a_Wire:
+            i.drawwire()
         ray.draw_cube_wires(Vector3(0, 0, 0), 2.0, 2.0, 2.0, ray.BLACK)
         draw_ax_line()
 
