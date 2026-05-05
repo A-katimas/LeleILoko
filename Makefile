@@ -4,10 +4,28 @@ VENV		= .venv
 SRC			= Flyin.py
 
 TMP_DIRS	= __pycache__ .mypy_cache .ruff_cache
+
+#---- EASY ----
+
 #CONFIG		?= maps/easy/01_linear_path.txt
+#CONFIG		?= maps/easy/02_simple_fork.txt
+CONFIG		?= maps/easy/03_basic_capacity.txt
+
+#---- MEDIUM ----
+
+#CONFIG		?= maps/medium/01_dead_end_trap.txt
 #CONFIG		?= maps/medium/02_circular_loop.txt
+#CONFIG		?= maps/medium/03_priority_puzzle.txt
+
+#---- HARD ----
+
+#CONFIG		?= maps/hard/01_maze_nightmare.txt
+#CONFIG		?= maps/hard/02_capacity_hell.txt
 #CONFIG		?= maps/hard/03_ultimate_challenge.txt
-CONFIG		?= maps/challenger/01_the_impossible_dream.txt
+
+#---- CHALLENGER ----
+
+#CONFIG		?= maps/challenger/01_the_impossible_dream.txt
 install:
 	@echo ">>> Installation de uv..."
 	curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -50,6 +68,40 @@ fclean: clean
 	@echo ">>> Suppression du venv..."
 	rm -rf $(VENV)
 	@echo ">>> FClean OK !"
+
+easy1:
+	@echo ">>> Lancement de la simulation..."
+	$(UV) run $(SRC) maps/easy/01_linear_path.txt
+easy2:
+	@echo ">>> Lancement de la simulation..."
+	$(UV) run $(SRC) maps/easy/02_simple_fork.txt
+easy3:
+	@echo ">>> Lancement de la simulation..."
+	$(UV) run $(SRC) maps/easy/01_linear_path.txt
+
+medium1:
+	@echo ">>> Lancement de la simulation..."
+	$(UV) run $(SRC) maps/medium/01_dead_end_trap.txt
+medium2:
+	@echo ">>> Lancement de la simulation..."
+	$(UV) run $(SRC) maps/medium/02_circular_loop.txt
+medium3:
+	@echo ">>> Lancement de la simulation..."
+	$(UV) run $(SRC) maps/medium/03_priority_puzzle.txt
+
+hard1:
+	@echo ">>> Lancement de la simulation..."
+	$(UV) run $(SRC) maps/hard/01_maze_nightmare.txt
+hard2:
+	@echo ">>> Lancement de la simulation..."
+	$(UV) run $(SRC) maps/hard/02_capacity_hell.txt
+hard3:
+	@echo ">>> Lancement de la simulation..."
+	$(UV) run $(SRC) maps/hard/03_ultimate_challenge.txt
+
+challenger:
+	@echo ">>> Lancement de la simulation..."
+	$(UV) run $(SRC) maps/challenger/01_the_impossible_dream.txt
 
 .PHONY: run install debug clean fclean lint lint-strict
 

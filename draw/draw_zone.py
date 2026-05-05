@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import pyray as ray
 from pyray import Vector3
-from parthing.parthing_folders import Zone
+from parthing.parthing_folders import Zone, Connection
 from use_terminal.color import THEME_COLOR
 
 
@@ -11,7 +11,6 @@ class Base_Zone(ABC):
         self.zone = zone
         self.zone_color = self.what_color
         self.pos = pos
-        print(zone.name)
 
     @abstractmethod
     def drawzone(self):
@@ -41,7 +40,7 @@ class Normal_Zone(Base_Zone):
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
         self.mesh = ray.gen_mesh_torus(
-            0.25, float(zone.max_drones) * 1.5, 10, 15
+            0.05, float(zone.max_drones) * 1.5, 15, 20
         )
         self.model = ray.load_model_from_mesh(self.mesh)
 
@@ -75,11 +74,11 @@ class Normal_Zone(Base_Zone):
             Vector3(1, 1, 1),
             180,
             Vector3(1, 1, 1),
-            ray.RED,
+            self.zone_color(),
         )
 
 
-class restricted_Zone(Base_Zone):
+class Restricted_Zone(Base_Zone):
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
         self.mesh = ray.gen_mesh_torus(0.25, float(zone.max_drones), 10, 15)
@@ -102,7 +101,7 @@ class restricted_Zone(Base_Zone):
         )
 
 
-class blocked_Zone(Base_Zone):
+class Blocked_Zone(Base_Zone):
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
         self.mesh = ray.gen_mesh_torus(0.25, float(zone.max_drones), 10, 15)
@@ -125,7 +124,7 @@ class blocked_Zone(Base_Zone):
         )
 
 
-class priority_Zone(Base_Zone):
+class Priority_Zone(Base_Zone):
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
         self.mesh = ray.gen_mesh_torus(0.25, float(zone.max_drones), 10, 15)
@@ -160,12 +159,34 @@ def draw_zone(zone: list[Zone]) -> list[Base_Zone]:
             zone_print.append(Normal_Zone(i, (x, y, 0)))
 
         if i.zone_type == "restricted":
-            zone_print.append(restricted_Zone(i, (x, y, 0)))
+            zone_print.append(Restricted_Zone(i, (x, y, 0)))
 
         if i.zone_type == "blocked":
-            zone_print.append(blocked_Zone(i, (x, y, 0)))
+            zone_print.append(Blocked_Zone(i, (x, y, 0)))
 
         if i.zone_type == "priority":
-            zone_print.append(priority_Zone(i, (x, y, 0)))
+            zone_print.append(Priority_Zone(i, (x, y, 0)))
 
     return zone_print
+
+
+class Wire:
+    def __init__(
+        self, connection: Connection, zone_list: list[Base_Zone]
+    ) -> None:
+        self.connection = connection
+        self.zone_list = zone_list
+        print(connection.a, connection.b)
+
+    #def find_zone(self)-> tuple[Base_Zone,Base_Zone]:
+    #    e for e in self.zone_list if self.
+    #    return 
+    def drawwire(self):
+        # ray.draw_cube_wires_v()
+        pass
+
+
+def draw_Wire(connection: list[Connection], zone_list: list[Base_Zone]):
+    wire_print: list[Wire] = []
+    for i in connection:
+        wire_print.append(Wire(i, zone_list))
