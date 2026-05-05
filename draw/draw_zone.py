@@ -9,12 +9,31 @@ class Base_Zone(ABC):
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         self.nbdrone = 0
         self.zone = zone
-
+        self.zone_color = self.what_color
         self.pos = pos
+        print(zone.name)
 
     @abstractmethod
     def drawzone(self):
         pass
+
+    def what_color(self) -> ray.Color:
+        if self.zone.color in THEME_COLOR:
+            return ray.Color(
+                THEME_COLOR[str(self.zone.color)][0],
+                THEME_COLOR[str(self.zone.color)][1],
+                THEME_COLOR[str(self.zone.color)][2],
+                THEME_COLOR[str(self.zone.color)][3],
+            )
+        else:
+            return self.rainbow_color()
+
+    def rainbow_color(self) -> ray.Color:
+        import time
+
+        """Génère une couleur qui cycle dans le spectre."""
+        hue = (time.time() * 60) % 360  # 60° par seconde
+        return ray.color_from_hsv(hue, 1.0, 1.0)
 
 
 # "blocked", "restricted", "priority
@@ -39,7 +58,7 @@ class Normal_Zone(Base_Zone):
             1,
             1,
             1,
-            ray.RED,
+            self.zone_color(),
         )
 
         # ray.draw_model_ex(
@@ -79,7 +98,7 @@ class restricted_Zone(Base_Zone):
             1,
             1,
             1,
-            ray.BLUE,
+            self.zone_color(),
         )
 
 
@@ -102,7 +121,7 @@ class blocked_Zone(Base_Zone):
             1,
             1,
             1,
-            ray.YELLOW,
+            self.zone_color(),
         )
 
 
@@ -125,7 +144,7 @@ class priority_Zone(Base_Zone):
             1,
             1,
             1,
-            ray.PURPLE,
+            self.zone_color(),
         )
 
 

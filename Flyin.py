@@ -33,7 +33,12 @@ def main():
     while not ray.window_should_close():
         ray.update_camera(
             camera, ray.CameraMode.CAMERA_FIRST_PERSON
-        )  # rotation auto à la souris
+        )
+        if ray.is_key_pressed(ray.KeyboardKey.KEY_TAB):
+            if ray.is_cursor_hidden():
+                ray.enable_cursor()
+            else:
+                ray.disable_cursor()
 
         ray.begin_drawing()
 
