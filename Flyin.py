@@ -18,7 +18,7 @@ def main():
     ray.set_target_fps(60)
     flyin = parse_file(sys.argv[1])
 
-    print(flyin.connections[1])
+    sol_texture = ray.load_texture("model_use/sol/Grass002_1K-JPG_Color.jpg")
 
     camera = Camera3D(
         Vector3(10, 5, 10),  # position caméra
@@ -27,10 +27,23 @@ def main():
         45.0,  # FOV
         ray.CameraProjection.CAMERA_PERSPECTIVE,
     )
+
     draw_a_zone = draw_zone(flyin.zones)
     draw_a_Wire = draw_Wire(flyin.connections, draw_a_zone)
     a_drone = Drone(flyin)
     draw_a_drone = DroneDrawer(a_drone)
+
+    sky_texture = ray.load_texture("model_use/backgrond/skybox.jpg")
+
+    sky_mesh = ray.gen_mesh_sphere(50, 15, 15)
+    sky_model = ray.load_model_from_mesh(sky_mesh)
+    sky_model.materials[0].maps[0].texture = sky_texture
+    ray.set_material_texture(sky_model.materials[0], 0, sky_texture)
+
+    sol_mesh = ray.gen_mesh_plane(1000, 1000, 1, 1)
+    sol_model = ray.load_model_from_mesh(sol_mesh)
+    sol_model.materials[0].maps[0].texture = sol_texture
+
     while not ray.window_should_close():
         ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
         if ray.is_key_pressed(ray.KeyboardKey.KEY_TAB):
@@ -43,6 +56,19 @@ def main():
 
         ray.clear_background(ray.RAYWHITE)
         ray.begin_mode_3d(camera)
+        # skybox
+        ray.rl_disable_backface_culling()
+        ray.draw_model_ex(
+            sky_model,
+            Vector3(0, -45, 0),  # centré sur la caméra
+            Vector3(0, 1, 0),
+            0.0,
+            Vector3(10, 10, 10),  # scale négatif → retourne le cube
+            ray.WHITE,
+        )
+        ray.rl_enable_backface_culling()
+        # flor
+        ray.draw_model(sol_model, Vector3(0, -50, 0), 1.0, ray.DARKGREEN)
         for i in draw_a_zone:
             i.drawzone()
         for i in draw_a_Wire:

@@ -52,5 +52,5 @@ class DroneDrawer:
 def draw_drone(connection: list[Drone]) -> list[DroneDrawer]:
     drone_print: list[DroneDrawer] = []
     for i in connection:
-        drone_print.append(DroneDrawer(Drone))
+        drone_print.append(DroneDrawer(i))
     return drone_print
