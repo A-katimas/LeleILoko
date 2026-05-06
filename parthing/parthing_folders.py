@@ -12,6 +12,7 @@ class Zone(BaseModel):
     name: str
     x: int
     y: int
+    z: int = 0
     zone_type: str = "normal"
     color: Optional[str] = None
     max_drones: int = 1
@@ -29,6 +30,10 @@ class Zone(BaseModel):
         if value <= 0:
             raise ValueError(color("max_drones must be > 0", 250, 100, 100))
         return value
+
+    @property
+    def pos(self) -> list[int, int, int]:
+        return [self.x, self.y, self.z]
 
 
 class Connection(BaseModel):

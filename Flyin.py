@@ -3,6 +3,8 @@ import pyray as ray
 from pyray import Camera3D, Vector3
 import sys
 from draw.draw_zone import draw_zone, draw_Wire
+from draw.draw_drone import DroneDrawer
+from algo.pathfind import Drone
 
 
 def draw_ax_line():
@@ -27,6 +29,8 @@ def main():
     )
     draw_a_zone = draw_zone(flyin.zones)
     draw_a_Wire = draw_Wire(flyin.connections, draw_a_zone)
+    a_drone = Drone(flyin)
+    draw_a_drone = DroneDrawer(a_drone)
     while not ray.window_should_close():
         ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
         if ray.is_key_pressed(ray.KeyboardKey.KEY_TAB):
@@ -43,6 +47,7 @@ def main():
             i.drawzone()
         for i in draw_a_Wire:
             i.drawwire()
+        draw_a_drone.drawdrone()
         ray.draw_cube_wires(Vector3(0, 0, 0), 2.0, 2.0, 2.0, ray.BLACK)
         draw_ax_line()
 
