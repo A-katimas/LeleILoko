@@ -40,7 +40,7 @@ class Base_Zone(ABC):
         import time
 
         """Génère une couleur qui cycle dans le spectre."""
-        hue = (time.time() * 60) % 360  # 60° par seconde
+        hue = ((time.time() * 60) + self.pos[0]) % 360  # 60° par seconde
         return ray.color_from_hsv(hue, 1.0, 1.0)
 
 

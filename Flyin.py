@@ -28,7 +28,7 @@ def main():
     draw_a_zone = draw_zone(flyin.zones)
     draw_a_Wire = draw_Wire(flyin.connections, draw_a_zone)
     while not ray.window_should_close():
-        ray.update_camera(camera, ray.CameraMode.CAMERA_FIRST_PERSON)
+        ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
         if ray.is_key_pressed(ray.KeyboardKey.KEY_TAB):
             if ray.is_cursor_hidden():
                 ray.enable_cursor()
