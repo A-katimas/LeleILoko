@@ -5,11 +5,15 @@ SRC			= Flyin.py
 
 TMP_DIRS	= __pycache__ .mypy_cache .ruff_cache
 
+#---- TEST ----
+
+CONFIG		?= maps/test/test1.txt
+
 #---- EASY ----
 
 #CONFIG		?= maps/easy/01_linear_path.txt
 #CONFIG		?= maps/easy/02_simple_fork.txt
-CONFIG		?= maps/easy/03_basic_capacity.txt
+#CONFIG		?= maps/easy/03_basic_capacity.txt
 
 #---- MEDIUM ----
 

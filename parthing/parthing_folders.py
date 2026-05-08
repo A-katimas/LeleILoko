@@ -32,7 +32,7 @@ class Zone(BaseModel):
         return value
 
     @property
-    def pos(self) -> list[int, int, int]:
+    def pos(self) -> list[int]:
         return [self.x, self.y, self.z]
 
 

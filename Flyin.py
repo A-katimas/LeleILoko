@@ -1,4 +1,4 @@
-from parthing.parthing_folders import parse_file
+from parthing.parthing_folders import parse_file, MapData
 import pyray as ray
 from pyray import Camera3D, Vector3
 import sys
@@ -22,55 +22,59 @@ def key_pressed():
 
 
 def main():
-    ray.init_window(1280, 720, "Fly-in")
-    ray.set_target_fps(60)
-    flyin = parse_file(sys.argv[1])
 
-    camera = Camera3D(
-        Vector3(10, 5, 10),  # position caméra
-        Vector3(0, 0, 0),  # cible (où elle regarde)
-        Vector3(0, 1, 0),  # "up" vector
-        45.0,  # FOV
-        ray.CameraProjection.CAMERA_PERSPECTIVE,
-    )
+    try:
+        flyin = parse_file(sys.argv[1])
 
-    window = WindowUse(
-        flyin,
-        "model_use/backgrond/skybox.jpg",
-        "model_use/sol/Grass002_1K-JPG_Color.jpg",
-    )
+        ray.init_window(1280, 720, "Fly-in")
+        ray.set_target_fps(60)
 
-    draw_a_zone = draw_zone(flyin.zones)
-    draw_a_Wire = draw_Wire(flyin.connections, draw_a_zone)
+        camera = Camera3D(
+            Vector3(10, 5, 10),  # position caméra
+            Vector3(0, 0, 0),  # cible (où elle regarde)
+            Vector3(0, 1, 0),  # "up" vector
+            45.0,  # FOV
+            ray.CameraProjection.CAMERA_PERSPECTIVE,
+        )
 
+        window = WindowUse(
+            flyin,
+            "model_use/backgrond/skybox.jpg",
+            "model_use/sol/Grass002_1K-JPG_Color.jpg",
+        )
 
-    while not ray.window_should_close():
-        ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
+        draw_a_zone = draw_zone(flyin.zones)
+        draw_a_Wire = draw_Wire(flyin.connections, draw_a_zone)
 
-        key_pressed()
+        while not ray.window_should_close():
+            ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
 
-        ray.begin_drawing()
+            key_pressed()
 
-        ray.clear_background(ray.RAYWHITE)
-        ray.begin_mode_3d(camera)
-        # skybox
-        window.draw_evironement()
-        # else
-        for i in draw_a_zone:
-            i.drawzone()
-        for i in draw_a_Wire:
-            i.drawwire()
+            ray.begin_drawing()
 
-        window.drone.drawdrone()
+            ray.clear_background(ray.RAYWHITE)
+            ray.begin_mode_3d(camera)
+            # skybox
+            window.draw_evironement()
+            # else
+            for i in draw_a_zone:
+                i.drawzone()
+            for i in draw_a_Wire:
+                i.drawwire()
 
-        ray.draw_cube_wires(Vector3(0, 0, 0), 2.0, 2.0, 2.0, ray.BLACK)
-        draw_ax_line()
+            window.drone.drawdrone()
 
-        ray.end_mode_3d()
+            ray.draw_cube_wires(Vector3(0, 0, 0), 2.0, 2.0, 2.0, ray.BLACK)
+            draw_ax_line()
 
-        ray.end_drawing()
+            ray.end_mode_3d()
 
-    ray.close_window()
+            ray.end_drawing()
+
+        ray.close_window()
+    except ValueError as e:
+        print(e)
 
 
 if __name__ == "__main__":

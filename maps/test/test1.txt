@@ -1,0 +1,17 @@
+nb_drones: 8
+
+start_hub: start 0 0 [color=null max_drones=12]
+hub: maze_loop1 1 0 [zone=restricted color=red]
+hub: maze_loop2 2 0 [zone=restricted color=purple]
+hub: maze_loop3 3 0 [zone=restricted color=green]
+hub: maze_loop4 4 0 [zone=restricted color=black]
+hub: maze_loop5 5 0 [zone=restricted color=brown]
+hub: maze_loop6 6 0 [zone=restricted color=orange]
+hub: maze_loop7 7 0 [zone=restricted color=maroon]
+hub: maze_loop8 8 0 [zone=restricted color=gold]
+hub: maze_loop9 9 0 [zone=restricted color=darkred]
+hub: maze_loop10 10 0 [zone=restricted color=violet]
+end_hub: goal 11 0 [color=crimson max_drones=15]
+
+connection: start-maze_loop7
+connection: start-maze_loop8
