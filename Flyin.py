@@ -5,14 +5,16 @@ import sys
 
 from draw.draw_window import WindowUse, loop_begin3d
 
+from algo.pathfind import test
 
-def draw_ax_line():
+
+def draw_ax_line() -> None:
     ray.draw_line_3d(Vector3(0, 0, 0), Vector3(20, 0, 0), ray.RED)
     ray.draw_line_3d(Vector3(0, 0, 0), Vector3(0, 20, 0), ray.GREEN)
     ray.draw_line_3d(Vector3(0, 0, 0), Vector3(0, 0, 20), ray.BLUE)
 
 
-def key_pressed():
+def key_pressed() -> None:
     if ray.is_key_pressed(ray.KeyboardKey.KEY_TAB):
         if ray.is_cursor_hidden():
             ray.enable_cursor()
@@ -20,7 +22,7 @@ def key_pressed():
             ray.disable_cursor()
 
 
-def main():
+def main() -> None:
 
     try:
         flyin = parse_file(sys.argv[1])
@@ -41,7 +43,8 @@ def main():
             "model_use/backgrond/skybox.jpg",
             "model_use/sol/Grass002_1K-JPG_Color.jpg",
         )
-
+        print("laaaaaaaaaaaaaaaaaaaaaaaaaa")
+        test(flyin)
         while not ray.window_should_close():
             ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
 

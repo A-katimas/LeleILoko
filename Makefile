@@ -47,15 +47,13 @@ debug:
 	@uv run python -m pdb $(SRC)
 
 lint:
-	@echo ">>> flake8..."
-	$(UV) run flake8 .
-	@echo ">>> mypy..."
-	$(UV) run mypy .
-	@echo ">>> Lint OK !"
+	@uv run $(PYTHON) -m flake8 . --extend-exclude .venv
+	@uv run $(PYTHON) -m mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+
 
 lint-strict:
 	@echo ">>> flake8 (strict)..."
-	$(UV) run flake8 --max-line-length=79 .
+	$(UV) run flake8 --max-line-length=79 .venv
 	@echo ">>> mypy --strict..."
 	$(UV) run mypy mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs .
 	@echo ">>> Lint strict OK !"
@@ -70,7 +68,8 @@ clean:
 
 fclean: clean
 	@echo ">>> Suppression du venv..."
-	rm -rf $(VENV)
+	@rm -rf $(VENV)
+	@rm -rf uv.lock
 	@echo ">>> FClean OK !"
 
 easy1:

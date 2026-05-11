@@ -2,7 +2,7 @@ import pyray as ray
 from pyray import Vector3, Model
 from parthing import MapData
 from draw.draw_drone import Drone, DroneDrawer
-from draw.draw_zone import draw_zone, draw_Wire
+from draw.draw_zone import printable_zone, printable_Wire
 
 
 class Floor:
@@ -19,7 +19,7 @@ class Floor:
         sol_model.materials[0].maps[0].texture = self.texture
         return sol_model
 
-    def draw_floor(self):
+    def draw_floor(self) -> None:
         ray.draw_model(
             self.floor_model, Vector3(0, -50, 0), 1.0, ray.DARKGREEN
         )
@@ -37,7 +37,7 @@ class Skybase:
         ray.set_material_texture(sky_model.materials[0], 0, self.texture)
         return sky_model
 
-    def draw_sky(self):
+    def draw_sky(self) -> None:
         ray.rl_disable_backface_culling()
         ray.draw_model_ex(
             self.skymodel,
@@ -59,8 +59,8 @@ class WindowUse:
     ):
         self.mapdata = mapdata
         self.drone = self.drone_init()
-        self.zone = draw_zone(self.mapdata.zones)
-        self.wire = draw_Wire(self.mapdata.connections, self.zone)
+        self.zone = printable_zone(self.mapdata.zones)
+        self.wire = printable_Wire(self.mapdata.connections, self.zone)
         self.skybase = Skybase(sky_texture)
         self.floorbase = Floor(floor_texture)
 
@@ -68,13 +68,13 @@ class WindowUse:
         a_drone = Drone(self.mapdata)
         return DroneDrawer(a_drone)
 
-    def draw_zone_wire(self):
+    def draw_zone_wire(self) -> None:
         for i in self.zone:
             i.drawzone()
-        for i in self.wire:
-            i.drawwire()
+        for e in self.wire:
+            e.drawwire()
 
-    def draw_evironement(self):
+    def draw_evironement(self) -> None:
         # skybox
         self.skybase.draw_sky()
 
@@ -82,7 +82,7 @@ class WindowUse:
         self.floorbase.draw_floor()
 
 
-def loop_begin3d(window: WindowUse):
+def loop_begin3d(window: WindowUse) -> None:
     window.draw_evironement()
     # else
 

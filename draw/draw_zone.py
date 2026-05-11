@@ -22,7 +22,7 @@ class Base_Zone(ABC):
         self.pos = pos
 
     @abstractmethod
-    def drawzone(self):
+    def drawzone(self) -> None:
         pass
 
     def what_color(self) -> ray.Color:
@@ -157,7 +157,7 @@ class Priority_Zone(Base_Zone):
 
 
 # "blocked", "restricted", "priority
-def draw_zone(zone: list[Zone]) -> list[Base_Zone]:
+def printable_zone(zone: list[Zone]) -> list[Base_Zone]:
     zone_print: list[Base_Zone] = []
     j: int = 0
     for i in zone:
@@ -199,7 +199,7 @@ class Wire:
         )
         return (zone_a, zone_b)
 
-    def mesh_gen(self):
+    def mesh_gen(self) -> None:
         lenght = ray.vector3_distance(self.cible_pos_1, self.cible_pos_2)
         self.midel = ray.vector3_scale(
             ray.vector3_add(self.cible_pos_1, self.cible_pos_2), 0.5
@@ -213,7 +213,7 @@ class Wire:
         self.mesh = ray.gen_mesh_cylinder(1, lenght, 8)
         self.model = ray.load_model_from_mesh(self.mesh)
 
-    def drawwire(self):
+    def drawwire(self) -> None:
         ray.draw_model_wires_ex(
             self.model,
             self.midel,
@@ -224,7 +224,7 @@ class Wire:
         )
 
 
-def draw_Wire(
+def printable_Wire(
     connection: list[Connection], zone_list: list[Base_Zone]
 ) -> list[Wire]:
     wire_print: list[Wire] = []
