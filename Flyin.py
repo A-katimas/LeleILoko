@@ -1,10 +1,9 @@
-from parthing.parthing_folders import parse_file, MapData
+from parthing.parthing_folders import parse_file
 import pyray as ray
 from pyray import Camera3D, Vector3
 import sys
-from draw.draw_zone import draw_zone, draw_Wire
 
-from draw.draw_window import WindowUse
+from draw.draw_window import WindowUse, loop_begin3d
 
 
 def draw_ax_line():
@@ -43,9 +42,6 @@ def main():
             "model_use/sol/Grass002_1K-JPG_Color.jpg",
         )
 
-        draw_a_zone = draw_zone(flyin.zones)
-        draw_a_Wire = draw_Wire(flyin.connections, draw_a_zone)
-
         while not ray.window_should_close():
             ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
 
@@ -54,18 +50,13 @@ def main():
             ray.begin_drawing()
 
             ray.clear_background(ray.RAYWHITE)
-            ray.begin_mode_3d(camera)
-            # skybox
-            window.draw_evironement()
-            # else
-            for i in draw_a_zone:
-                i.drawzone()
-            for i in draw_a_Wire:
-                i.drawwire()
 
-            window.drone.drawdrone()
+            ray.begin_mode_3d(camera)
+
+            loop_begin3d(window)
 
             ray.draw_cube_wires(Vector3(0, 0, 0), 2.0, 2.0, 2.0, ray.BLACK)
+
             draw_ax_line()
 
             ray.end_mode_3d()

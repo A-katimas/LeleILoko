@@ -1,8 +1,8 @@
 import pyray as ray
-from pyray import Texture, Vector3, Model
+from pyray import Vector3, Model
 from parthing import MapData
 from draw.draw_drone import Drone, DroneDrawer
-from draw.draw_zone import Base_Zone, Wire
+from draw.draw_zone import draw_zone, draw_Wire
 
 
 class Floor:
@@ -59,14 +59,20 @@ class WindowUse:
     ):
         self.mapdata = mapdata
         self.drone = self.drone_init()
-        # self.zone = zone
-        # self.wire = wire
+        self.zone = draw_zone(self.mapdata.zones)
+        self.wire = draw_Wire(self.mapdata.connections, self.zone)
         self.skybase = Skybase(sky_texture)
         self.floorbase = Floor(floor_texture)
 
-    def drone_init(self) -> Drone:
+    def drone_init(self) -> DroneDrawer:
         a_drone = Drone(self.mapdata)
         return DroneDrawer(a_drone)
+
+    def draw_zone_wire(self):
+        for i in self.zone:
+            i.drawzone()
+        for i in self.wire:
+            i.drawwire()
 
     def draw_evironement(self):
         # skybox
@@ -75,3 +81,11 @@ class WindowUse:
         # floor
         self.floorbase.draw_floor()
 
+
+def loop_begin3d(window: WindowUse):
+    window.draw_evironement()
+    # else
+
+    window.draw_zone_wire()
+
+    window.drone.drawdrone()
