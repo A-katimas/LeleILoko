@@ -3,6 +3,7 @@ from math import sin
 from itertools import count
 from algo.pathfind import Drone
 from typing import Generator
+import random
 
 
 class DroneDrawer:
@@ -18,6 +19,11 @@ class DroneDrawer:
         self.model: ray.Model = ray.load_model("model_use/drone/scene.gltf")
         self.wait: Generator[float, None, None] = self.idle()
         self.is_idle: bool = True
+        self.repulsion_offset: tuple[float, float, float] = (
+            random.uniform(-1.0, 1.0),
+            0.0,
+            random.uniform(-1.0, 1.0),
+        )
 
     # def move(self) -> None:
     #     self.pos = self.add_pos(self.pos, self.speed)
@@ -36,8 +42,6 @@ class DroneDrawer:
             ),
             delta,
         )
-        print(diff)
-
         self.pos = self.mul_pos(
             self.add_pos(
                 (self.drone.prec_pos[0], self.drone.prec_pos[1], 0), diff
@@ -80,8 +84,9 @@ class DroneDrawer:
 
     def idle(self) -> Generator[float, None, None]:
         for off in (a * 0.01 for a in count(start=0, step=1)):
-            yield (sin(off) * sin(2 * off)) * 0.5
+            yield (sin(off) * sin(2 * off) - (self.drone.id_drone / 10)) * 0.5
 
+    # - (self.drone.id_drone / 10)
     def drawdrone(self) -> None:
         offset: tuple[float, float, float] = (
             (0.0, next(self.wait, 0.0), 0.0)
@@ -90,7 +95,9 @@ class DroneDrawer:
         )
         ray.draw_model_ex(
             self.model,
-            # self.pos,
+            #self.add_pos(
+            #    self.add_pos(self.pos, offset), self.repulsion_offset
+            #),
             self.add_pos(self.pos, offset),
             self.ax,
             280,

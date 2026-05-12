@@ -58,17 +58,19 @@ class WindowUse:
         floor_texture: str,
     ):
         self.mapdata = mapdata
-        self.drone = self.drone_init()
+        self.drones_drowers: list[DroneDrawer] = []
+        self.drones_logique: list[Drone] = []
+        self.drone_init()
         self.zone = printable_zone(self.mapdata.zones)
         self.wire = printable_Wire(self.mapdata.connections, self.zone)
         self.skybase = Skybase(sky_texture)
         self.floorbase = Floor(floor_texture)
 
-    def drone_init(self) -> DroneDrawer:
-        drones = []
+    def drone_init(self) -> None:
         for i in range(self.mapdata.nb_drones):
-            a_drone = Drone(self.mapdata)
-        return DroneDrawer(a_drone)
+            self.drones_logique.append(Drone(self.mapdata, i))
+        for e in self.drones_logique:
+            self.drones_drowers.append(DroneDrawer(e))
 
     def draw_zone_wire(self) -> None:
         for i in self.zone:
@@ -83,10 +85,37 @@ class WindowUse:
         # floor
         self.floorbase.draw_floor()
 
+    def check_collision(self) -> None:
+        for i, drawer_a in enumerate(self.drones_drowers):
+            for drawer_b in self.drones_drowers[i + 1 :]:
+                dx = drawer_a.pos[0] - drawer_b.pos[0]
+                dy = drawer_a.pos[1] - drawer_b.pos[1]
+                dz = drawer_a.pos[2] - drawer_b.pos[2]
+                distance = (dx**2 + dy**2 + dz**2) ** 0.5
+                if distance < 1.0 and distance > 0:
+                    # vecteur de répulsion normalisé
+                    force = 2
+                    drawer_a.repulsion_offset = (
+                        drawer_a.repulsion_offset[0] + (dx / distance) * force,
+                        0.0,
+                        drawer_a.repulsion_offset[2] + (dz / distance) * force,
+                    )
+                    drawer_b.pos = (
+                        drawer_b.pos[0] - (dx / distance) * force,
+                        drawer_b.pos[1] - (dy / distance) * force,
+                        drawer_b.pos[2] - (dz / distance) * force,
+                    )
+
 
 def loop_begin3d(window: WindowUse, delta: float) -> None:
     window.draw_evironement()
     # else
     window.draw_zone_wire()
-    window.drone.lerp(delta)
-    window.drone.drawdrone()
+    for i in window.drones_drowers:
+        i.repulsion_offset = (0.0, 0.0, 0.0)
+
+    window.check_collision()
+
+    for i in window.drones_drowers:
+        i.lerp(delta)
+        i.drawdrone()

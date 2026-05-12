@@ -53,7 +53,8 @@ def main() -> None:
             key_pressed()
             if time.time() - start > 1:
                 start = time.time()
-                window.drone.drone.move()
+                for i in window.drones_logique:
+                    i.move()
 
             ray.begin_drawing()
 

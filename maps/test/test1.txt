@@ -13,7 +13,7 @@ hub: maze_loop9 9 0 [zone=restricted color=darkred]
 hub: maze_loop10 10 0 [zone=restricted color=violet]
 hub: maze_fuze 15 15 [zone=restricted color=yellow]
 hub: maze_loop12 11 0 [zone=restricted color=blue]
-end_hub: goal 12 0 [color=crimson max_drones=15]
+end_hub: goal 12 0 [color=transpa max_drones=15]
 
 connection: start-maze_loop7
 connection: start-maze_loop8

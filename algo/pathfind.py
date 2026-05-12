@@ -3,12 +3,13 @@ from collections import deque
 
 
 class Drone:
-    def __init__(self, map: MapData):
+    def __init__(self, map: MapData, id_drone: int):
         self.map = map
         self.pos = self.find_pos_zone_start()
         self.prec_pos = self.pos
         self.print_way = self.reconstruct_path(self.algo_bfs())
         self.path = self.reconstruct_path(self.algo_bfs())
+        self.id_drone = id_drone
 
     def find_pos_zone_start(self) -> tuple[int, int]:
         zone = next(e for e in self.map.zones if self.map.start == e.name)
@@ -58,7 +59,7 @@ class Drone:
 
 
 def test(map: MapData) -> None:
-    drone = Drone(map)
+    drone = Drone(map, 999)
     print("start : ", map.start)
     print("end : ", map.end)
     print("path : ", drone.print_way)
