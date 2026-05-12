@@ -2,6 +2,7 @@ from parthing.parthing_folders import parse_file
 import pyray as ray
 from pyray import Camera3D, Vector3
 import sys
+import time
 
 from draw.draw_window import WindowUse, loop_begin3d
 
@@ -27,7 +28,7 @@ def main() -> None:
     try:
         flyin = parse_file(sys.argv[1])
 
-        ray.init_window(1280, 720, "Fly-in")
+        ray.init_window(2380, 1920, "Fly-in")
         ray.set_target_fps(60)
 
         camera = Camera3D(
@@ -45,18 +46,21 @@ def main() -> None:
         )
         print("laaaaaaaaaaaaaaaaaaaaaaaaaa")
         test(flyin)
+        start = time.time()
         while not ray.window_should_close():
             ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
 
             key_pressed()
+            if time.time() - start > 1:
+                start = time.time()
+                window.drone.drone.move()
 
             ray.begin_drawing()
 
             ray.clear_background(ray.RAYWHITE)
 
             ray.begin_mode_3d(camera)
-
-            loop_begin3d(window)
+            loop_begin3d(window, time.time() - start)
 
             ray.draw_cube_wires(Vector3(0, 0, 0), 2.0, 2.0, 2.0, ray.BLACK)
 

@@ -65,7 +65,9 @@ class WindowUse:
         self.floorbase = Floor(floor_texture)
 
     def drone_init(self) -> DroneDrawer:
-        a_drone = Drone(self.mapdata)
+        drones = []
+        for i in range(self.mapdata.nb_drones):
+            a_drone = Drone(self.mapdata)
         return DroneDrawer(a_drone)
 
     def draw_zone_wire(self) -> None:
@@ -82,10 +84,9 @@ class WindowUse:
         self.floorbase.draw_floor()
 
 
-def loop_begin3d(window: WindowUse) -> None:
+def loop_begin3d(window: WindowUse, delta: float) -> None:
     window.draw_evironement()
     # else
-
     window.draw_zone_wire()
-
+    window.drone.lerp(delta)
     window.drone.drawdrone()

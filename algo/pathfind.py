@@ -6,7 +6,9 @@ class Drone:
     def __init__(self, map: MapData):
         self.map = map
         self.pos = self.find_pos_zone_start()
+        self.prec_pos = self.pos
         self.print_way = self.reconstruct_path(self.algo_bfs())
+        self.path = self.reconstruct_path(self.algo_bfs())
 
     def find_pos_zone_start(self) -> tuple[int, int]:
         zone = next(e for e in self.map.zones if self.map.start == e.name)
@@ -42,6 +44,17 @@ class Drone:
                     parents[neighbor.name] = actual_zone
                     waiting_search.append(neighbor.name)
         return None
+
+    def move(self):
+        if self.path:
+            print(f"moved to {self.path[0]}")
+            self.prec_pos, self.pos = (
+                self.pos,
+                self.map.get_zone(self.path[0]).pos,
+            )
+            self.path = self.path[1:]
+        else:
+            self.prec_pos = self.pos
 
 
 def test(map: MapData) -> None:
