@@ -220,7 +220,7 @@ class Wire:
             self.axe,
             degrees(self.angle),
             Vector3(0.5, 0.5, 0.5),
-            ray.SKYBLUE,
+            THEME_COLOR["invyziblmepatropkanmem"],
         )
 
 

@@ -47,6 +47,7 @@ def main() -> None:
         print("laaaaaaaaaaaaaaaaaaaaaaaaaa")
         test(flyin)
         start = time.time()
+        timer = time.time()
         while not ray.window_should_close():
             ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
 
@@ -61,7 +62,10 @@ def main() -> None:
             ray.clear_background(ray.RAYWHITE)
 
             ray.begin_mode_3d(camera)
-            loop_begin3d(window, time.time() - start)
+
+            timer_next = time.time()
+            loop_begin3d(window, time.time() - start, timer_next - timer)
+            timer = timer_next
 
             ray.draw_cube_wires(Vector3(0, 0, 0), 2.0, 2.0, 2.0, ray.BLACK)
 

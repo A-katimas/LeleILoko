@@ -107,9 +107,8 @@ class WindowUse:
                     )
 
 
-def loop_begin3d(window: WindowUse, delta: float) -> None:
+def loop_begin3d(window: WindowUse, move_delta: float, delta: float) -> None:
     window.draw_evironement()
-    # else
     window.draw_zone_wire()
     for i in window.drones_drowers:
         i.repulsion_offset = (0.0, 0.0, 0.0)
@@ -117,5 +116,5 @@ def loop_begin3d(window: WindowUse, delta: float) -> None:
     window.check_collision()
 
     for i in window.drones_drowers:
-        i.lerp(delta)
-        i.drawdrone()
+        i.lerp(move_delta)
+        i.drawdrone(delta)

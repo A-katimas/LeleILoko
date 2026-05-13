@@ -16,7 +16,8 @@ class Zone(BaseModel):
     zone_type: str = "normal"
     color: Optional[str] = None
     max_drones: int = 1
-
+    drone_in:int =0 
+    
     @field_validator("zone_type")
     def check_zone_type(cls, value: str) -> str:
         if value not in VALID_ZONE_TYPES:
@@ -34,6 +35,8 @@ class Zone(BaseModel):
     @property
     def pos(self) -> list[int]:
         return [self.x, self.y, self.z]
+
+    
 
 
 class Connection(BaseModel):

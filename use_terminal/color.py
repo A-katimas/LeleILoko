@@ -30,6 +30,7 @@ THEME_COLOR = {
     "navy": (15, 31, 127, 255),
     "lightpurple": (191, 47, 191, 255),
     "transpa": (255, 255, 255, 10),
+    "invyziblmepatropkanmem": (255, 255, 255, 75),
 }
 
 
