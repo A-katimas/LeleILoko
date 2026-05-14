@@ -7,9 +7,9 @@ TMP_DIRS	= __pycache__ .mypy_cache .ruff_cache
 
 #---- TEST ----
 # CONFIG		?= maps/test/rainbow.txt
- CONFIG		?= maps/test/test1.txt
+#  CONFIG		?= maps/test/test1.txt
 # CONFIG		?= maps/test/oprmap.txt
-# CONFIG		?= maps/test/azur.txt
+CONFIG		?= maps/test/azur.txt
 #---- EASY ----
 
 #CONFIG		?= maps/easy/01_linear_path.txt

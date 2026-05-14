@@ -16,8 +16,8 @@ class Zone(BaseModel):
     zone_type: str = "normal"
     color: Optional[str] = None
     max_drones: int = 1
-    drone_in:int =0 
-    
+    drone_in: int = 0
+
     @field_validator("zone_type")
     def check_zone_type(cls, value: str) -> str:
         if value not in VALID_ZONE_TYPES:
@@ -36,14 +36,12 @@ class Zone(BaseModel):
     def pos(self) -> list[int]:
         return [self.x, self.y, self.z]
 
-    
-
 
 class Connection(BaseModel):
     a: str
     b: str
     capacity: int = 1
-
+    ocupation_list: list[int] = []
     @field_validator("capacity")
     def check_capacity(cls, value: int) -> int:
         if value <= 0:
@@ -101,7 +99,7 @@ def parse_zone(line: str, line_no: int) -> tuple[str, Zone]:
 
         metadata = {}
         if "[" in line:
-            meta_str = line[line.index("["):]
+            meta_str = line[line.index("[") :]
             metadata = parse_metadata(meta_str)
 
         zone_type = metadata.get("zone", "normal")
