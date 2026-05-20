@@ -147,6 +147,11 @@ class Vector:
             )
         )
 
+    def __eq__(self, value) -> bool:
+        if self.__iscompatible(value):
+            return all([(a == b) for a, b in zip(self, value)])
+        raise TypeError(f"cant compare {self} to {value}")
+
     def abs_diff(self, other) -> int:
         if self.__iscompatible(other):
             return sum(
