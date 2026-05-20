@@ -49,6 +49,16 @@ class Vector:
                     )
                 )
             )
+        elif isinstance(other, (float, int)):
+            return self.__class__(
+                tuple(
+                    map(
+                        lambda a: a * other,
+                        [a for a in self],
+                    )
+                )
+            )
+
         raise TypeError(f"cant mul {self} to {other}")
 
     def __truediv__(self, other):
@@ -61,6 +71,15 @@ class Vector:
                     )
                 )
             )
+        elif isinstance(other, (float, int)):
+            return self.__class__(
+                tuple(
+                    map(
+                        lambda a: a / other,
+                        [a for a in self],
+                    )
+                )
+            )
         raise TypeError(f"cant div {self} to {other}")
 
     def __floordiv__(self, other):
@@ -70,6 +89,15 @@ class Vector:
                     map(
                         lambda a_b: a_b[0] // a_b[1],
                         [(a, b) for a, b in zip(self, other)],
+                    )
+                )
+            )
+        elif isinstance(other, (float, int)):
+            return self.__class__(
+                tuple(
+                    map(
+                        lambda a: a // other,
+                        [a for a in self],
                     )
                 )
             )
@@ -118,6 +146,22 @@ class Vector:
                 )
             )
         )
+
+    def abs_diff(self, other) -> int:
+        if self.__iscompatible(other):
+            return sum(
+                map(
+                    lambda a_b: max(a_b) - min(a_b),
+                    [(a, b) for a, b in zip(self, other)],
+                )
+            )
+        raise TypeError(f"cant floordiv {self} to {other}")
+
+    def __bool__(self):
+        return any(self._dim_pos)
+
+    def __hash__(self):
+        return hash(tuple(self))
 
 
 class Pos3d(Vector):
