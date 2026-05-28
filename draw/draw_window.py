@@ -85,26 +85,26 @@ class WindowUse:
         # floor
         self.floorbase.draw_floor()
 
-    def check_collision(self) -> None:
-        for i, drawer_a in enumerate(self.drones_drowers):
-            for drawer_b in self.drones_drowers[i + 1 :]:
-                dx = drawer_a.pos[0] - drawer_b.pos[0]
-                dy = drawer_a.pos[1] - drawer_b.pos[1]
-                dz = drawer_a.pos[2] - drawer_b.pos[2]
-                distance = (dx**2 + dy**2 + dz**2) ** 0.5
-                if distance < 1.0 and distance > 0:
-                    # vecteur de répulsion normalisé
-                    force = 2
-                    drawer_a.repulsion_offset = (
-                        drawer_a.repulsion_offset[0] + (dx / distance) * force,
-                        0.0,
-                        drawer_a.repulsion_offset[2] + (dz / distance) * force,
-                    )
-                    drawer_b.pos = (
-                        drawer_b.pos[0] - (dx / distance) * force,
-                        drawer_b.pos[1] - (dy / distance) * force,
-                        drawer_b.pos[2] - (dz / distance) * force,
-                    )
+    # def check_collision(self) -> None:
+    #     for i, drawer_a in enumerate(self.drones_drowers):
+    #         for drawer_b in self.drones_drowers[i + 1 :]:
+    #             dx = drawer_a.pos[0] - drawer_b.pos[0]
+    #             dy = drawer_a.pos[1] - drawer_b.pos[1]
+    #             dz = drawer_a.pos[2] - drawer_b.pos[2]
+    #             distance = (dx**2 + dy**2 + dz**2) ** 0.5
+    #             if distance < 1.0 and distance > 0:
+    #                 # vecteur de répulsion normalisé
+    #                 force = 2
+    #                 drawer_a.repulsion_offset = (
+    #                     drawer_a.repulsion_offset[0] + (dx / distance) * force,
+    #                     0.0,
+    #                     drawer_a.repulsion_offset[2] + (dz / distance) * force,
+    #                 )
+    #                 drawer_b.pos = (
+    #                     drawer_b.pos[0] - (dx / distance) * force,
+    #                     drawer_b.pos[1] - (dy / distance) * force,
+    #                     drawer_b.pos[2] - (dz / distance) * force,
+    #                 )
 
 
 def loop_begin3d(window: WindowUse, move_delta: float, delta: float) -> None:
@@ -113,7 +113,7 @@ def loop_begin3d(window: WindowUse, move_delta: float, delta: float) -> None:
     for i in window.drones_drowers:
         i.repulsion_offset = (0.0, 0.0, 0.0)
 
-    window.check_collision()
+    # window.check_collision()
 
     for i in window.drones_drowers:
         i.lerp(move_delta)

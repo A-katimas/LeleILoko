@@ -48,7 +48,7 @@ class Drone:
 
     def move(self):
         if self.path:
-            print(f"moved to {self.path[0]}")
+            print(f"drone {self.id_drone}moved to {self.path[0]}")
             self.prec_pos, self.pos = (
                 self.pos,
                 self.map.get_zone(self.path[0]).pos,
