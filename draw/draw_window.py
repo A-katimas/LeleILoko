@@ -68,9 +68,34 @@ class WindowUse:
 
     def drone_init(self) -> None:
         for i in range(self.mapdata.nb_drones):
-            self.drones_logique.append(Drone(self.mapdata, i))
+            drone = Drone(self.mapdata, i)
+            self.drones_logique.append(drone)
         for e in self.drones_logique:
             self.drones_drowers.append(DroneDrawer(e))
+
+    def step_simulation(self) -> None:
+        """Faire avancer la simulation d'un tour"""
+        # Réinitialiser l'occupation des connexions
+        for conn in self.mapdata.connections:
+            conn.ocupation_list = []
+
+        # Étape 1: Chaque drone propose son prochain mouvement
+        proposals = []
+        for drone in self.drones_logique:
+            if drone.path:  # Si le drone a encore du chemin
+                next_zone = drone.path[0]
+                proposals.append((drone, next_zone))
+
+        if not proposals:
+            print("✅ SIMULATION TERMINÉE - Tous les drones sont arrivés!")
+            return
+
+        # Étape 2: Résoudre les conflits de capacité
+
+        # Étape 3: Appliquer les mouvements autorisés
+        for drone, next_zone in proposals:
+            if not drone.blocked:
+                drone.move_if_allowed(next_zone)
 
     def draw_zone_wire(self) -> None:
         for i in self.zone:
@@ -110,8 +135,8 @@ class WindowUse:
 def loop_begin3d(window: WindowUse, move_delta: float, delta: float) -> None:
     window.draw_evironement()
     window.draw_zone_wire()
-    for i in window.drones_drowers:
-        i.repulsion_offset = (0.0, 0.0, 0.0)
+    # for i in window.drones_drowers:
+    # i.repulsion_offset = (0.0, 0.0, 0.0)
 
     # window.check_collision()
 
