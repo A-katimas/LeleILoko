@@ -28,7 +28,7 @@ def main() -> None:
     try:
         flyin = parse_file(sys.argv[1])
 
-        ray.init_window(2380, 1920, "Fly-in")
+        ray.init_window(1300, 820, "Fly-in")
         ray.set_target_fps(60)
 
         camera = Camera3D(
@@ -48,6 +48,7 @@ def main() -> None:
         test(flyin)
         start = time.time()
         timer = time.time()
+        simulation_step = 0  # ← Compter les étapes de simulation
         while not ray.window_should_close():
             ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
 
@@ -56,6 +57,9 @@ def main() -> None:
                 start = time.time()
                 for i in window.drones_logique:
                     i.move()
+                # simulation_step += 1
+                # print(f"\n--- Étape simulation {simulation_step} ---")
+                # window.step_simulation()  # ← C'EST ICI!
 
             ray.begin_drawing()
 
@@ -82,4 +86,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
