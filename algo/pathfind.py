@@ -74,7 +74,7 @@ class Drone:
         j = 0
 
         for i in path:
-            if not j == 3:
+            if j < 3:
                 if i == self.pos_zone:
                     print(
                         "-1 pour la zone ",
@@ -85,14 +85,14 @@ class Drone:
                     zone_add = self.map.get_zone(i)
                     zone_add.drone_in -= 1
                 else:
+                    zone_add = self.map.get_zone(i)
+                    zone_add.drone_in += 1
                     print(
                         "+1 pour la zone ",
                         i,
                         "    \t\tavec le drone ",
                         self.id_drone,
                     )
-                    zone_add = self.map.get_zone(i)
-                    zone_add.drone_in += 1
             j += 1
         return path
 
@@ -100,15 +100,16 @@ class Drone:
 
         if self.drone_moved:
             j = 0
-            for i in self.path:
-                if not j == 3:
+            for i in self.path[1:]:
+                if j < 2:
                     erase = self.map.get_zone(i)
                     erase.drone_in -= 1
                     print("supp", erase.name)
                 j += 1
-            erase = self.map.get_zone(self.pos_zone)
-            erase.drone_in += 1
-            print("+1 pour ", erase.name)
+            # erase = self.map.get_zone(self.pos_zone)
+            # erase.drone_in += 1
+            # print("+1 pour ", erase.name)
+            print("cause drone ", self.id_drone)
 
     def move(self):
 
