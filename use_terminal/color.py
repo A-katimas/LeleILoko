@@ -1,3 +1,5 @@
+from random import choice
+
 THEME_COLOR = {
     "green": (50, 255, 55, 255),
     "red": (230, 41, 55, 255),
@@ -77,3 +79,16 @@ def bg_color(text: str | int, r: int, g: int, b: int) -> str:
     if isinstance(text, str):
         return f"\033[48;2;{r};{g};{b}m{str(text)}\033[0m"
     return f"\033[48;2;{r};{g};{b}m{text}\033[0m"
+
+
+def random_color(text: str | int) -> str:
+    rgb = choice(list(THEME_COLOR.values()))
+    r, g, b = rgb[0], rgb[1], rgb[2]
+    if isinstance(text, str):
+        return f"\033[38;2;{r};{g};{b}m{str(text)}\033[0m"
+    return f"\033[38;2;{r};{g};{b}m{text}\033[0m"
+
+
+def chose_color(text: str, color: int) -> str:
+    r, g, b, _ = list(THEME_COLOR.values())[color]
+    return f"\033[38;2;{r};{g};{b}m{text}\033[0m"

@@ -73,30 +73,6 @@ class WindowUse:
         for e in self.drones_logique:
             self.drones_drowers.append(DroneDrawer(e))
 
-    def step_simulation(self) -> None:
-        """Faire avancer la simulation d'un tour"""
-        # Réinitialiser l'occupation des connexions
-        for conn in self.mapdata.connections:
-            conn.ocupation_list = []
-
-        # Étape 1: Chaque drone propose son prochain mouvement
-        proposals = []
-        for drone in self.drones_logique:
-            if drone.path:  # Si le drone a encore du chemin
-                next_zone = drone.path[0]
-                proposals.append((drone, next_zone))
-
-        if not proposals:
-            print("✅ SIMULATION TERMINÉE - Tous les drones sont arrivés!")
-            return
-
-        # Étape 2: Résoudre les conflits de capacité
-
-        # Étape 3: Appliquer les mouvements autorisés
-        for drone, next_zone in proposals:
-            if not drone.blocked:
-                drone.move_if_allowed(next_zone)
-
     def draw_zone_wire(self) -> None:
         for i in self.zone:
             i.drawzone()
@@ -113,23 +89,37 @@ class WindowUse:
     # def check_collision(self) -> None:
     #     for i, drawer_a in enumerate(self.drones_drowers):
     #         for drawer_b in self.drones_drowers[i + 1 :]:
-    #             dx = drawer_a.pos[0] - drawer_b.pos[0]
-    #             dy = drawer_a.pos[1] - drawer_b.pos[1]
-    #             dz = drawer_a.pos[2] - drawer_b.pos[2]
-    #             distance = (dx**2 + dy**2 + dz**2) ** 0.5
-    #             if distance < 1.0 and distance > 0:
-    #                 # vecteur de répulsion normalisé
-    #                 force = 2
-    #                 drawer_a.repulsion_offset = (
-    #                     drawer_a.repulsion_offset[0] + (dx / distance) * force,
-    #                     0.0,
-    #                     drawer_a.repulsion_offset[2] + (dz / distance) * force,
-    #                 )
-    #                 drawer_b.pos = (
-    #                     drawer_b.pos[0] - (dx / distance) * force,
-    #                     drawer_b.pos[1] - (dy / distance) * force,
-    #                     drawer_b.pos[2] - (dz / distance) * force,
-    #                 )
+    #             dx = draweDrone 11 → final_torture5
+
+
+# r_a.pos[0] - drawer_b.pos[0]
+#             dy = drawer_a.pos[1] - drawer_b.pos[1]
+#             dz = drawer_a.pos[2] - drawer_b.pos[2]
+#             distance = (dx**2 + dy**2 + dz**2) ** 0.5
+#             if distance < 1.0 and distance > 0:
+#                 # vecteur de répulsion normalisé
+#                 force = 2
+#                 drawer_a.repulsion_offset = (
+#                     drawer_a.repulsion_offset[0] + (dx / distance) * force,
+#                     0.0,
+#                     drawer_a.repulsion_offset[2] + (dz / distance) * force,
+#                 )
+#                 drawer_b.pos = (
+#                     drawer_b.pos[0] - (dx / distance) * force,
+#                     drawer_b.pos[1] - (dy / distance) * force,
+#                     drawer_b.pos[2] - (dz / distance) * force,
+#                 )
+
+
+def loop_mouv_drone(window: WindowUse) -> bool:
+    for i in window.drones_logique:
+        i.return_to_the_past()
+    for i in window.drones_logique:
+        i.move()
+    window.drones_logique[0].print_all_zone()
+    if all(drone.drone_finished for drone in window.drones_logique):
+        return True
+    return False
 
 
 def loop_begin3d(window: WindowUse, move_delta: float, delta: float) -> None:

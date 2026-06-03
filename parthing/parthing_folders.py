@@ -1,7 +1,4 @@
-from pydantic import (
-    BaseModel,
-    field_validator,
-)
+from pydantic import BaseModel, field_validator, ConfigDict
 from use_terminal.color import color
 from typing import Optional, Dict
 
@@ -9,6 +6,7 @@ VALID_ZONE_TYPES = {"normal", "blocked", "restricted", "priority"}
 
 
 class Zone(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
     name: str
     x: int
     y: int
@@ -36,12 +34,16 @@ class Zone(BaseModel):
     def pos(self) -> list[int]:
         return [self.x, self.y, self.z]
 
+    def capacity_is_valid(self) -> bool:
+        return self.drone_in < self.max_drones
+
 
 class Connection(BaseModel):
     a: str
     b: str
     capacity: int = 1
     ocupation_list: list[int] = []
+
     @field_validator("capacity")
     def check_capacity(cls, value: int) -> int:
         if value <= 0:
@@ -50,11 +52,20 @@ class Connection(BaseModel):
 
 
 class MapData(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+
     nb_drones: int
     zones: list[Zone]
     connections: list[Connection]
     start: str
     end: str
+
+    def model_post_init(
+        self, __context
+    ):  # ← appelé automatiquement après __init__
+        self.get_zone(self.start).max_drones = self.nb_drones
+        self.get_zone(self.end).max_drones = self.nb_drones
+        self.get_zone(self.start).drone_in = self.nb_drones
 
     def get_zone(self, name: str) -> Zone:
         for z in self.zones:

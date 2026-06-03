@@ -3,8 +3,8 @@ import pyray as ray
 from pyray import Camera3D, Vector3
 import sys
 import time
-
-from draw.draw_window import WindowUse, loop_begin3d
+from use_terminal.color import chose_color
+from draw.draw_window import WindowUse, loop_begin3d, loop_mouv_drone
 
 from algo.pathfind import test
 
@@ -28,7 +28,7 @@ def main() -> None:
     try:
         flyin = parse_file(sys.argv[1])
 
-        ray.init_window(1300, 820, "Fly-in")
+        ray.init_window(1920, 1200, "Fly-in")
         ray.set_target_fps(60)
 
         camera = Camera3D(
@@ -44,22 +44,22 @@ def main() -> None:
             "model_use/backgrond/skybox.jpg",
             "model_use/sol/Grass002_1K-JPG_Color.jpg",
         )
-        print("laaaaaaaaaaaaaaaaaaaaaaaaaa")
-        test(flyin)
         start = time.time()
         timer = time.time()
-        simulation_step = 0  # ← Compter les étapes de simulation
+        turn = 0
+        print("\n\n\n")
+        finish = False
         while not ray.window_should_close():
             ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
 
             key_pressed()
-            if time.time() - start > 1:
+            if time.time() - start > 1 and finish == False:
                 start = time.time()
-                for i in window.drones_logique:
-                    i.move()
-                # simulation_step += 1
-                # print(f"\n--- Étape simulation {simulation_step} ---")
-                # window.step_simulation()  # ← C'EST ICI!
+                print(chose_color(f"\tturn {turn}", turn))
+                finish = loop_mouv_drone(window)
+                if finish:
+                    print(f"\t\tend with : {turn} trun")
+                turn += 1
 
             ray.begin_drawing()
 
