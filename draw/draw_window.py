@@ -3,7 +3,7 @@ from pyray import Vector3, Model
 from parthing import MapData
 from draw.draw_drone import Drone, DroneDrawer
 from draw.draw_zone import printable_zone, printable_Wire
-from algo.pathfind import Simulation
+# from algo.pathfind import Simulation
 
 
 class Floor:
@@ -66,7 +66,6 @@ class WindowUse:
         self.wire = printable_Wire(self.mapdata.connections, self.zone)
         self.skybase = Skybase(sky_texture)
         self.floorbase = Floor(floor_texture)
-        self.simulation: Simulation
 
     def drone_init(self) -> None:
         for i in range(self.mapdata.nb_drones):

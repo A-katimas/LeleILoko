@@ -12,7 +12,8 @@ def print_zone(zone: Zone):
     print(f"z: {zone.z}")
     print(f"zone_type: {zone.zone_type}")
     print(f"max_drones: {zone.max_drones}")
-    print(f"drone_in: {zone.drone_in}")
+    # for i in zone.drone_in_turn:
+    print(f"drone_in: {zone.drone_in_turn}")
     print()
 
 
@@ -51,10 +52,12 @@ class Drone:
             self.pos_zone.name: None
         }  # ← start n'a pas de parent
         while waiting_search:
+            self.map.append_turn()
             actual_zone = waiting_search.popleft()
 
-            if actual_zone == self.map.get_zone(self.map.end):
+            if actual_zone == self.map.end:
                 return parents
+            # print(parents)
             j = 0
             for neighbor in self.map.get_neighbors(actual_zone):
                 if neighbor.name not in visit:  # ← pas déjà visité
@@ -65,38 +68,32 @@ class Drone:
                 j += 1
         return None
 
-    def reconstruct_path(self, parents: dict | None) -> list[str]:
+    def reconstruct_path(self, parents: dict | None) -> list[Zone]:
+        print("reconstruct", parents)
         if parents is None:
             return []  # pas de chemin trouvé
         path: list[Zone] = []
         currents = self.map.get_zone(self.map.end)
         while currents is not None:
+            print("pass")
+            if currents == "None":
+                print("prout", "\n")
             path.append(currents)
-            currents = parents[currents]
+
+            currents = self.map.get_zone(parents[currents.name])
         path.reverse()
-        j = 0
+        j = 1
 
         for i in path:
-            if j < 2:
-                if i == self.pos_zone:
-                    print(
-                        "-1 pour la zone ",
-                        i,
-                        "    \t\tavec le drone ",
-                        self.id_drone,
-                    )
-                    zone_add = i
-                    zone_add.drone_in -= 1
-                else:
-                    zone_add = i
-                    zone_add.drone_in += 1
-                    print(
-                        "+1 pour la zone ",
-                        i,
-                        "    \t\tavec le drone ",
-                        self.id_drone,
-                    )
-                j += 1
+            zone_add = i
+            zone_add.drone_in_turn[j] += 1
+            print(
+                "+1 pour la zone ",
+                i.name,
+                "    \t\tavec le drone ",
+                self.id_drone,
+            )
+            j += 1
         return path
 
     def return_to_the_past(self):
@@ -109,14 +106,13 @@ class Drone:
                     erase.drone_in -= 1
                     print("supp", erase.name)
                 j += 1
-            # erase = self.map.get_zone(self.pos_zone)
-            # erase.drone_in += 1
-            # print("+1 pour ", erase.name)
+
             print("cause drone ", self.id_drone)
 
     def move(self):
 
         self.drone_moved = False
+        print(self.path)
         if self.pos_zone == self.map.end:
             self.prec_pos = self.pos_xyz
             print(f"drone {self.id_drone} arrived ")
@@ -125,12 +121,16 @@ class Drone:
         elif self.path:
             self.path = self.reconstruct_path(self.algo_bfs())
             if self.path:
-                print(chose_color("drone path ", self.id_drone), self.path)
+                print(chose_color("drone path ", self.id_drone))
+                for i in self.path:
+                    print(i.name, end=" ")
                 if not len(self.path) == 1:
-                    print(f"drone {self.id_drone} moved to {self.path[1]}")
+                    print(
+                        f"\ndrone {self.id_drone} moved to {self.path[1].name}"
+                    )
                     self.prec_pos, self.pos = (
                         self.pos_xyz,
-                        self.map.get_zone(self.path[1]).pos,
+                        Pos3d(self.path[1].pos),
                     )
                     self.path = self.path[1:]
                     if not len(self.path) == 0:
@@ -143,93 +143,93 @@ class Drone:
         print()
 
 
-class Simulation:
-    def __init__(self, map: MapData, drone: Drone):
-        self.map = map
-        self.drone_lead = drone
+# class Simulation:
+#     def __init__(self, map: MapData, drone: Drone):
+#         self.map = map
+#         self.drone_lead = drone
 
-    def algo_bfs(self) -> None | dict[str, str | None]:
-        if self.drone_lead.pos_zone == "":
-            return self
-        waiting_search = deque([self.drone_lead.pos_zone])
+#     def algo_bfs(self) -> None | dict[str, str | None]:
+#         if self.drone_lead.pos_zone == "":
+#             return self
+#         waiting_search = deque([self.drone_lead.pos_zone])
 
-        visit = {self.drone_lead.pos_zone}
-        parents: dict[str, str | None] = {
-            self.drone_lead.pos_zone: None
-        }  # ← start n'a pas de parent
+#         visit = {self.drone_lead.pos_zone}
+#         parents: dict[str, str | None] = {
+#             self.drone_lead.pos_zone: None
+#         }  # ← start n'a pas de parent
 
-        while waiting_search:
-            actual_zone = waiting_search.popleft()
+#         while waiting_search:
+#             actual_zone = waiting_search.popleft()
 
-            if actual_zone == self.map.end:
-                return parents
+#             if actual_zone == self.map.end:
+#                 return parents
 
-            for neighbor in self.map.get_neighbors(actual_zone):
-                if neighbor.name not in visit:  # ← pas déjà visité
-                    if (
-                        neighbor.capacity_is_valid()
-                        and not neighbor.zone_type == "blocked"
-                    ):
-                        visit.add(neighbor.name)
-                        parents[neighbor.name] = actual_zone
-                        waiting_search.append(neighbor.name)
-        return None
+#             for neighbor in self.map.get_neighbors(actual_zone):
+#                 if neighbor.name not in visit:  # ← pas déjà visité
+#                     if (
+#                         neighbor.capacity_is_valid()
+#                         and not neighbor.zone_type == "blocked"
+#                     ):
+#                         visit.add(neighbor.name)
+#                         parents[neighbor.name] = actual_zone
+#                         waiting_search.append(neighbor.name)
+#         return None
 
-    def reconstruct_path(self, parents: dict | None) -> list[str]:
-        if parents is None:
-            return []  # pas de chemin trouvé
-        path: list[str] = []
-        current = self.map.end
-        while current is not None:
-            path.append(current)
-            current = parents[current]
-            # print(self.map.get_zone(current).zone_type)
-            # if self.map.get_zone(current).zone_type == "restricted":
-            #     path.append(current)
+#     def reconstruct_path(self, parents: dict | None) -> list[str]:
+#         if parents is None:
+#             return []  # pas de chemin trouvé
+#         path: list[str] = []
+#         current = self.map.end
+#         while current is not None:
+#             path.append(current)
+#             current = parents[current]
+#             # print(self.map.get_zone(current).zone_type)
+#             # if self.map.get_zone(current).zone_type == "restricted":
+#             #     path.append(current)
 
-        path.reverse()
-        j = 0
-        for i in path.copy():
-            j += 1
-            if self.map.get_zone(i).zone_type == "restricted":
-                path.insert(j, i)
-                print(path)
-        print(path)
-        for i in path:
-            # if j < 3:
-            if i == self.drone_lead.pos_zone:
-                print(
-                    "-1 pour la zone ",
-                    i,
-                    "    \t\tavec le drone ",
-                    self.drone_lead.id_drone,
-                )
-                zone_add = self.map.get_zone(i)
-                zone_add.drone_in -= 1
-            else:
-                zone_add = self.map.get_zone(i)
-                zone_add.drone_in += 1
-                print(
-                    "+1 pour la zone ",
-                    i,
-                    "    \t\tavec le drone ",
-                    self.drone_lead.id_drone,
-                )
-            # j += 1
-        return path
+#         path.reverse()
+#         j = 0
+#         for i in path.copy():
+#             j += 1
+#             if self.map.get_zone(i).zone_type == "restricted":
+#                 path.insert(j, i)
+#                 print(path)
+#         print(path)
+#         for i in path:
+#             # if j < 3:
+#             if i == self.drone_lead.pos_zone:
+#                 print(
+#                     "-1 pour la zone ",
+#                     i,
+#                     "    \t\tavec le drone ",
+#                     self.drone_lead.id_drone,
+#                 )
+#                 zone_add = self.map.get_zone(i)
+#                 zone_add.drone_in -= 1
+#             else:
+#                 zone_add = self.map.get_zone(i)
+#                 zone_add.drone_in += 1
+#                 print(
+#                     "+1 pour la zone ",
+#                     i,
+#                     "    \t\tavec le drone ",
+#                     self.drone_lead.id_drone,
+#                 )
+#             # j += 1
+#         return path
 
-    def all_path(self) -> list[list[str]]:
-        valid_path = False
-        path_tamp = []
-        all_del_patho = []
-        while not valid_path:
-            path_tamp = self.reconstruct_path(self.algo_bfs())
-            if path_tamp == []:
-                valid_path = True
-            else:
-                all_del_patho.append(path_tamp)
+#     def all_path(self) -> list[list[str]]:
+#         valid_path = False
+#         path_tamp = []
+#         all_del_patho = []
+#         while not valid_path:
+#             path_tamp = self.reconstruct_path(self.algo_bfs())
+#             if path_tamp == []:
+#                 valid_path = True
+#             else:
+#                 all_del_patho.append(path_tamp)
 
-        return sorted(all_del_patho, key=len)
+#         return sorted(all_del_patho, key=len)
 
 
 def test(map: MapData) -> None:
