@@ -3,6 +3,7 @@ from pyray import Vector3, Model
 from parthing import MapData
 from draw.draw_drone import Drone, DroneDrawer
 from draw.draw_zone import printable_zone, printable_Wire
+from algo.pathfind import Simulation
 
 
 class Floor:
@@ -65,6 +66,7 @@ class WindowUse:
         self.wire = printable_Wire(self.mapdata.connections, self.zone)
         self.skybase = Skybase(sky_texture)
         self.floorbase = Floor(floor_texture)
+        self.simulation: Simulation
 
     def drone_init(self) -> None:
         for i in range(self.mapdata.nb_drones):
@@ -72,6 +74,11 @@ class WindowUse:
             self.drones_logique.append(drone)
         for e in self.drones_logique:
             self.drones_drowers.append(DroneDrawer(e))
+        # self.simulation = Simulation(self.mapdata, self.drones_logique[0])
+        # print("path simu")
+        # for i in self.simulation.all_path():
+        #     print(i)
+        print("\nfin simu\n ")
 
     def draw_zone_wire(self) -> None:
         for i in self.zone:
@@ -116,6 +123,7 @@ def loop_mouv_drone(window: WindowUse) -> bool:
         i.return_to_the_past()
     for i in window.drones_logique:
         i.move()
+
     window.drones_logique[0].print_all_zone()
     if all(drone.drone_finished for drone in window.drones_logique):
         return True

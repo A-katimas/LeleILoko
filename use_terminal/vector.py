@@ -165,6 +165,13 @@ class Vector:
     def __hash__(self):
         return hash(tuple(self))
 
+    def __getitem__(self, key):
+        return self._dim_pos.__getitem__(key)
+
+    def __getattr__(self, name):
+        if name in self.DIM_ORDER[0 : self.CLASS_LEN]:
+            return self[self.DIM_ORDER.find(name)]
+
 
 class Pos3d(Vector):
     CLASS_LEN = 3

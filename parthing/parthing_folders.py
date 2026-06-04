@@ -14,7 +14,7 @@ class Zone(BaseModel):
     zone_type: str = "normal"
     color: Optional[str] = None
     max_drones: int = 1
-    drone_in: int = 0
+    drone_in: list[int] = [0]
 
     @field_validator("zone_type")
     def check_zone_type(cls, value: str) -> str:
@@ -34,8 +34,11 @@ class Zone(BaseModel):
     def pos(self) -> list[int]:
         return [self.x, self.y, self.z]
 
-    def capacity_is_valid(self) -> bool:
-        return self.drone_in < self.max_drones
+    def capacity_is_valid(self, turn: int) -> bool:
+        while turn >= len(self.drone_in):
+            self.drone_in.append(0)
+            print("la", len(self.drone_in), "trun ", turn)
+        return self.drone_in[turn] < self.max_drones
 
 
 class Connection(BaseModel):
@@ -65,7 +68,7 @@ class MapData(BaseModel):
     ):  # ← appelé automatiquement après __init__
         self.get_zone(self.start).max_drones = self.nb_drones
         self.get_zone(self.end).max_drones = self.nb_drones
-        self.get_zone(self.start).drone_in = self.nb_drones
+        self.get_zone(self.start).drone_in[0] = self.nb_drones
 
     def get_zone(self, name: str) -> Zone:
         for z in self.zones:

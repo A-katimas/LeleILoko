@@ -3,6 +3,7 @@ from math import sin
 from itertools import count
 from algo.pathfind import Drone
 from typing import Generator
+from use_terminal.vector import Pos3d
 import random
 
 type Vec3 = tuple[float, float, float]
@@ -10,27 +11,27 @@ type Vec3 = tuple[float, float, float]
 
 class DroneDrawer:
     def __init__(self, drone: Drone) -> None:
-        self.pos: tuple[float, float, float] = (
-            float(drone.pos[0]),
+        self.pos: Pos3d = Pos3d(
+            drone.pos_xyz[0],
             float(0),
-            float(drone.pos[1]),
+            drone.pos_xyz[1],
         )
-        self.wated_pos: tuple[float, float, float] = (
-            float(drone.pos[0]),
+        self.wated_pos: Pos3d = Pos3d(
+            drone.pos_xyz.x,
             float(0),
-            float(drone.pos[1]),
+            drone.pos_xyz.y,
         )
-        self.speed: tuple[float, float, float] = (0.0, 0.0, 0.0)
-        self.acceleration: Vec3 = (0.0, 0.0, 0.0)
+        self.speed: Pos3d = Pos3d(0.0, 0.0, 0.0)
+        self.acceleration: Pos3d = Pos3d(0.0, 0.0, 0.0)
 
         self.drone = drone
-        self.ax: tuple[int, int, int] = (0, 50, 0)
+        self.ax: Pos3d = Pos3d(0, 50, 0)
         self.model: ray.Model = ray.load_model("model_use/drone/scene.gltf")
 
         # self.wait: Generator[float, None, None] = self.idle()  # generator idle
         # self.is_idle: bool = True
 
-        self.repulsion_offset: tuple[float, float, float] = (
+        self.repulsion_offset: Pos3d = Pos3d(
             random.uniform(-1.0, 1.0),
             0.0,
             random.uniform(-1.0, 1.0),
@@ -47,52 +48,55 @@ class DroneDrawer:
     def lerp(self, delta: float):
         """delta = proportion de 0 a 1 entre prec frame et new frame"""
 
-        diff = self.mul_pos(
-            self.sub_pos(
-                (self.drone.pos[0], self.drone.pos[1], 0),
-                (self.drone.prec_pos[0], self.drone.prec_pos[1], 0),
-            ),
-            delta,
-        )
-        self.wated_pos = self.mul_pos(
-            self.add_pos(
-                (self.drone.prec_pos[0], self.drone.prec_pos[1], 0), diff
-            ),
-            4,
-        )
+        diff = (self.drone.pos_xyz - self.drone.prec_pos) * delta
 
-    @staticmethod
-    def add_pos(
-        pos1: tuple[float, float, float],
-        pos2: tuple[float, float, float],
-    ) -> tuple[float, float, float]:
-        return (
-            pos1[0] + pos2[0],
-            pos1[1] + pos2[1],
-            pos1[2] + pos2[2],
-        )
+        # self.mul_pos(
+        #     self.sub_pos(
+        #         (self.drone.pos[0], self.drone.pos[1], 0),
+        #         (self.drone.prec_pos[0], self.drone.prec_pos[1], 0),
+        #     ),
+        #     delta,
+        # )
+        self.wated_pos = (self.drone.prec_pos + diff) * 4
+        # self.mul_pos(
+        #     self.add_pos(
+        #         (self.drone.prec_pos[0], self.drone.prec_pos[1], 0), diff
+        #     ),
+        #     4,
+        # )
 
-    @staticmethod
-    def sub_pos(
-        pos1: tuple[float, float, float],
-        pos2: tuple[float, float, float],
-    ) -> tuple[float, float, float]:
-        return (
-            pos1[0] - pos2[0],
-            pos1[1] - pos2[1],
-            pos1[2] - pos2[2],
-        )
+    # @staticmethod
+    # def add_pos(
+    #     pos1: tuple[float, float, float],
+    #     pos2: tuple[float, float, float],
+    # ) -> tuple[float, float, float]:
+    #     return (
+    #         pos1[0] + pos2[0],
+    #         pos1[1] + pos2[1],
+    #         pos1[2] + pos2[2],
+    #     )
 
-    @staticmethod
-    def mul_pos(
-        pos1: tuple[float, float, float],
-        mul,
-    ) -> tuple[float, float, float]:
-        return (
-            pos1[0] * mul,
-            pos1[1] * mul,
-            pos1[2] * mul,
-        )
+    # @staticmethod
+    # def sub_pos(
+    #     pos1: tuple[float, float, float],
+    #     pos2: tuple[float, float, float],
+    # ) -> tuple[float, float, float]:
+    #     return (
+    #         pos1[0] - pos2[0],
+    #         pos1[1] - pos2[1],
+    #         pos1[2] - pos2[2],
+    #     )
+
+    # @staticmethod
+    # def mul_pos(
+    #     pos1: tuple[float, float, float],
+    #     mul,
+    # ) -> tuple[float, float, float]:
+    #     return (
+    #         pos1[0] * mul,
+    #         pos1[1] * mul,
+    #         pos1[2] * mul,
+    #     )
 
     # def idle(self) -> Generator[float, None, None]:
     #     for off in (a * 0.01 for a in count(start=0, step=1)):
@@ -105,20 +109,22 @@ class DroneDrawer:
         friction = 0.3  # [0, 1]
         # print(friction)
         thrust = 100.0
-        new_pos: Vec3 = self.add_pos(
-            self.pos, self.mul_pos(self.speed, delta_t)
-        )
-        wanted_vec = self.sub_pos(self.wated_pos, self.pos)
-        slow_vec = self.mul_pos(self.speed, -friction)
+        new_pos: Pos3d = self.pos + self.speed * delta_t
 
-        new_speed: Vec3 = self.add_pos(
-            self.add_pos(
-                self.speed,
-                self.add_pos(self.acceleration, slow_vec),
-            ),
-            self.mul_pos(wanted_vec, delta_t * thrust),
-        )
-        new_accel: Vec3 = self.acceleration
+        wanted_vec = self.wated_pos - self.pos
+        slow_vec = self.speed * -friction
+
+        new_speed: Vec3 = (
+            self.speed + (self.acceleration + slow_vec)
+        ) + wanted_vec * (delta_t * thrust)
+        # self.add_pos(
+        #     self.add_pos(
+        #         self.speed,
+        #         self.add_pos(self.acceleration, slow_vec),
+        #     ),
+        #     self.mul_pos(wanted_vec, delta_t * thrust),
+        # )
+        new_accel: Pos3d = self.acceleration
 
         self.pos = new_pos
         self.speed = new_speed
@@ -137,8 +143,8 @@ class DroneDrawer:
             #    self.add_pos(self.pos, offset), self.repulsion_offset
             # ),
             # self.add_pos(self.pos, offset),
-            self.pos,
-            self.ax,
+            list(self.pos),
+            list(self.ax),
             280,
             (0.3, 0.3, 0.3),
             ray.WHITE,
