@@ -11,8 +11,9 @@ type Vec3 = tuple[float, float, float]
 
 
 class DroneDrawer:
-    
+
     model = ray.load_model("model_use/drone/scene.gltf")
+
     def __init__(self, drone: Drone) -> None:
         self.pos: Pos3d = Pos3d(
             drone.pos_xyz[0],
@@ -42,11 +43,8 @@ class DroneDrawer:
         self.idle_stade = 0
         self.idle_pos = Pos3d(0, 0, 0)
 
-
-
     def lerp(self, delta: float):
         """delta = proportion de 0 a 1 entre prec frame et new frame"""
-
 
         delta *= random.uniform(0.9, 1.1)
         diff = (self.drone.pos_xyz - self.drone.prec_pos) * delta
@@ -64,7 +62,6 @@ class DroneDrawer:
         #         (self.drone.prec_pos[0], self.drone.prec_pos[1], 0), diff
         #     ),
         #     4,
-        
 
     def update_pos(self, delta_t: float) -> None:
         delta_t = 0.016
@@ -94,10 +91,14 @@ class DroneDrawer:
         self.acceleration = new_accel
 
     def idle(self):
-        # if self.idle_stade %20 : 
-        self.idle_pos = (self.idle_pos * 0.99) + Pos3d(random.uniform(0.01, -0.01), random.uniform(0.01, -0.01), random.uniform(0.01, -0.01))
+        # if self.idle_stade %20 :
+        self.idle_pos = (self.idle_pos * 0.99) + Pos3d(
+            random.uniform(0.01, -0.01),
+            random.uniform(0.01, -0.01),
+            random.uniform(0.01, -0.01),
+        )
         # self.idle_stade = self.idle_stade +1
-        return self.idle_pos 
+        return self.idle_pos
 
     def drawdrone(self, delta_t: float) -> None:
         self.update_pos(delta_t)

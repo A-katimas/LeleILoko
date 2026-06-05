@@ -3,6 +3,7 @@ from pyray import Vector3, Model
 from parthing import MapData
 from draw.draw_drone import Drone, DroneDrawer
 from draw.draw_zone import printable_zone, printable_Wire
+
 # from algo.pathfind import Simulation
 
 
@@ -117,7 +118,7 @@ class WindowUse:
 #                 )
 
 
-def loop_mouv_drone(window: WindowUse , turn : int) -> bool:
+def loop_mouv_drone(window: WindowUse, turn: int) -> bool:
     # for i in window.drones_logique:
     #     i.return_to_the_past()
     for i in window.drones_logique:

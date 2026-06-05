@@ -6,7 +6,6 @@ import time
 from use_terminal.color import chose_color
 
 
-
 def draw_ax_line() -> None:
     ray.draw_line_3d(Vector3(0, 0, 0), Vector3(20, 0, 0), ray.RED)
     ray.draw_line_3d(Vector3(0, 0, 0), Vector3(0, 20, 0), ray.GREEN)
@@ -30,6 +29,7 @@ def main() -> None:
         ray.set_target_fps(60)
 
         from draw.draw_window import WindowUse, loop_begin3d, loop_mouv_drone
+
         camera = Camera3D(
             Vector3(10, 5, 10),  # position caméra
             Vector3(0, 0, 0),  # cible (où elle regarde)
@@ -54,8 +54,8 @@ def main() -> None:
             key_pressed()
             if time.time() - start > 1 and finish == False:
                 start = time.time()
-                print(chose_color(f"\tturn {turn}", turn%30))
-                finish = loop_mouv_drone(window,turn)
+                print(chose_color(f"\tturn {turn}", turn % 30))
+                finish = loop_mouv_drone(window, turn)
                 if finish:
                     print(f"\t\tend with : {turn} trun")
                 turn += 1

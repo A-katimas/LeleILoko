@@ -40,81 +40,105 @@ class Drone:
 
     def algo_nodes(self) -> list[str]:
         print()
-        print ("path for", chose_color(f"drone{self.id_drone}",self.id_drone%30))
+        print(
+            "path for",
+            chose_color(f"drone{self.id_drone}", self.id_drone % 30),
+        )
         visit = {self.act_zone.name: ([self.act_zone.name], 1)}
-        root_path :  list[list[list[str]]] = [[[self.act_zone.name]], [], []]
+        root_path: list[list[list[str]]] = [[[self.act_zone.name]], [], []]
         finis = False
         turn = 1
-        while root_path[0]:
+        while root_path[0] or root_path[1]:
             act_turn = root_path[0]
             for path in act_turn:
                 actual_zone = path[-1]
 
                 if actual_zone == self.map.end:
-                    finis = True             
+                    finis = True
                 if turn == len(self.map.zones[0].drone_in_turn):
                     self.map.append_turn()
                 for neighbor in self.map.get_neighbors(actual_zone):
-                    
+                    index = 1
                     if neighbor.capacity_is_valid(turn):
                         # print("turn" , turn)
-                        
-                        # print(f"name {neighbor.name}{neighbor.drone_in_turn}")
+                        # print(f"name {neighbor.name}{neighbor.drone_in_turn}"
                         new_path = path + [neighbor.name]
-                        
+                        if neighbor.zone_type == "restricted":
+                            new_path = new_path + [neighbor.name]
+                            index += 1
+                            if turn + 1 == len(
+                                self.map.zones[0].drone_in_turn
+                            ):
+                                self.map.append_turn()
+
                         if visit.get(neighbor.name) is None:
                             visit[neighbor.name] = (new_path, len(new_path))
-                            root_path[1].append(new_path)
-                        
+                            root_path[index].append(new_path)
+
                         # if too short
                         elif len(visit[neighbor.name][0]) > len(new_path):
                             visit[neighbor.name] = (new_path, len(new_path))
                             print("devrait jammais se passer")
-                            root_path[1].append(new_path)
-                        
+                            root_path[index].append(new_path)
+
                         # if priority
                         elif len(visit[neighbor.name][0]) == len(new_path):
-                            if (sum(int(self.map.get_zone(zone).zone_type == "priority") for zone in new_path) >
-                                sum(int(self.map.get_zone(zone).zone_type == "priority") for zone in visit[neighbor.name][0])):
-                                visit[neighbor.name] = (new_path, len(new_path))
-                                root_path[1].append(new_path)
-                                
+                            if sum(
+                                int(
+                                    self.map.get_zone(zone).zone_type
+                                    == "priority"
+                                )
+                                for zone in new_path
+                            ) > sum(
+                                int(
+                                    self.map.get_zone(zone).zone_type
+                                    == "priority"
+                                )
+                                for zone in visit[neighbor.name][0]
+                            ):
+                                visit[neighbor.name] = (
+                                    new_path,
+                                    len(new_path),
+                                )
+
+                                root_path[index].append(new_path)
+
                         # if neighbor.zone_type == "restricted":
                         #     new_path = new_path + [neighbor.name]
                         # waiting_queue.append(neighbor.name)
                     else:
                         print("qokijeszgfhbojuik")
                         root_path[1].append(path + [path[-1]])
-                        
-            turn +=1
+
+            turn += 1
             if finis:
                 break
             root_path = root_path[1:] + [[]]
             print(f"{len(act_turn)=}")
-            
+
         print(f"{visit=} final")
 
         return visit[self.map.end][0]
-            
-            
 
-    def reconstruct_path(self, path:list[str]) -> None:
+    def reconstruct_path(self, path: list[str]) -> None:
         print("reconstruct", path)
 
         prec_zone: Zone | None = None
 
         for i, zone in enumerate(path):
             real_zone = self.map.get_zone(zone)
-            real_zone.drone_in_turn[i:] = [a + 1 for a in real_zone.drone_in_turn[i:]]
+            real_zone.drone_in_turn[i:] = [
+                a + 1 for a in real_zone.drone_in_turn[i:]
+            ]
             self.map.get_zone(zone).check_capacity
             if prec_zone is not None:
-                prec_zone.drone_in_turn[i:] = [a - 1 for a in prec_zone.drone_in_turn[i:]]
+                prec_zone.drone_in_turn[i:] = [
+                    a - 1 for a in prec_zone.drone_in_turn[i:]
+                ]
             prec_zone = real_zone
         self.path = [self.map.get_zone(name) for name in path]
 
-
-
-    def move(self, turn : int):
+    def move(self, turn: int):
 
         self.drone_moved = False
         if self.act_zone == self.map.end:
@@ -125,12 +149,16 @@ class Drone:
         elif len(self.path) > turn:
             # self.path = self.reconstruct_path(self.algo_bfs())
             if self.path:
-                print(chose_color("drone path ", self.id_drone%30))
+                print(chose_color("drone path ", self.id_drone % 30))
                 for i in self.path:
                     print(i.name, end=" ")
                 if not len(self.path) == 1:
-                    print(chose_color(f"\ndrone {self.id_drone}",self.id_drone%30),
-                          f"moved to {self.path[1].name}")
+                    print(
+                        chose_color(
+                            f"\ndrone {self.id_drone}", self.id_drone % 30
+                        ),
+                        f"moved to {self.path[1].name}",
+                    )
                     self.prec_pos, self.pos_xyz = (
                         self.pos_xyz,
                         Pos3d(self.path[turn].pos),
@@ -143,4 +171,3 @@ class Drone:
             self.prec_pos = self.pos_xyz
             self.path = [self.act_zone]
         print()
-

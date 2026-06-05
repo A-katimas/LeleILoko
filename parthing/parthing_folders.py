@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator, ConfigDict
 from use_terminal.color import color
-from typing import Optional, Dict , Any
+from typing import Optional, Dict, Any
 
 VALID_ZONE_TYPES = {"normal", "blocked", "restricted", "priority"}
 
@@ -13,7 +13,7 @@ class Zone(BaseModel):
     z: int = 0
     zone_type: str = "normal"
     color: Optional[str] = None
-    max_drones: int = 1 
+    max_drones: int = 1
     drone_in_turn: list[int] = [0]
 
     @field_validator("zone_type")

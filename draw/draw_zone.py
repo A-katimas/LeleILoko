@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 import pyray as ray
 from pyray import Vector3
 from parthing.parthing_folders import Zone, Connection
@@ -16,15 +16,41 @@ def tuple_to_vector3(
 
 
 class Base_Zone(ABC):
+    TYPE_COLOR = ray.WHITE
+
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         self.nbdrone = 0
         self.zone = zone
-        self.zone_color = self.what_color
         self.pos = pos
+        self.zone_color = zone.color
+        self.mesh = ray.gen_mesh_torus(
+            0.05, float(zone.max_drones) * 1.5, 15, 20
+        )
+        self.model = ray.load_model_from_mesh(self.mesh)
 
-    @abstractmethod
     def drawzone(self) -> None:
-        pass
+        ray.draw_cube_wires(
+            self.pos,
+            1.5,
+            1.5,
+            1.5,
+            self.TYPE_COLOR,
+        )
+        ray.draw_cube(
+            self.pos,
+            1,
+            1,
+            1,
+            self.what_color(),
+        )
+        ray.draw_model_wires_ex(
+            self.model,
+            self.pos,
+            Vector3(1, 1, 1),
+            180,
+            Vector3(1, 1, 1),
+            self.what_color(),
+        )
 
     def what_color(self) -> ray.Color:
         if self.zone.color in THEME_COLOR:
@@ -32,7 +58,7 @@ class Base_Zone(ABC):
                 THEME_COLOR[str(self.zone.color)][0],
                 THEME_COLOR[str(self.zone.color)][1],
                 THEME_COLOR[str(self.zone.color)][2],
-                max(THEME_COLOR[str(self.zone.color)][3]-150, 10),
+                max(THEME_COLOR[str(self.zone.color)][3] - 150, 10),
             )
         else:
             return self.rainbow_color()
@@ -47,6 +73,8 @@ class Base_Zone(ABC):
 
 # "blocked", "restricted", "priority
 class Normal_Zone(Base_Zone):
+    TYPE_COLOR = ray.BLUE
+
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
         self.mesh = ray.gen_mesh_torus(
@@ -54,107 +82,32 @@ class Normal_Zone(Base_Zone):
         )
         self.model = ray.load_model_from_mesh(self.mesh)
 
-    def drawzone(self) -> None:
-        ray.draw_cube_wires(
-            self.pos,
-            1.5,
-            1.5,
-            1.5,
-            ray.RED,
-        )
-        ray.draw_cube(
-            self.pos,
-            1,
-            1,
-            1,
-            self.zone_color(),
-        )
-
-        # ray.draw_model_ex(
-        #    self.model,
-        #    self.pos,
-        #    Vector3(1, 1, 1),
-        #    180,
-        #    Vector3(1, 1, 1),
-        #    ray.RED,
-        # )
-        ray.draw_model_wires_ex(
-            self.model,
-            self.pos,
-            Vector3(1, 1, 1),
-            180,
-            Vector3(1, 1, 1),
-            self.zone_color(),
-        )
-
 
 class Restricted_Zone(Base_Zone):
+    TYPE_COLOR = ray.RED
+
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
         self.mesh = ray.gen_mesh_torus(0.25, float(zone.max_drones), 10, 15)
         self.model = ray.load_model_from_mesh(self.mesh)
-
-    def drawzone(self) -> None:
-        ray.draw_cube_wires(
-            self.pos,
-            1.5,
-            1.5,
-            1.5,
-            ray.BLUE,
-        )
-        ray.draw_cube(
-            self.pos,
-            1,
-            1,
-            1,
-            self.zone_color(),
-        )
 
 
 class Blocked_Zone(Base_Zone):
+    TYPE_COLOR = ray.YELLOW
+
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
         self.mesh = ray.gen_mesh_torus(0.25, float(zone.max_drones), 10, 15)
         self.model = ray.load_model_from_mesh(self.mesh)
-
-    def drawzone(self) -> None:
-        ray.draw_cube_wires(
-            self.pos,
-            1.5,
-            1.5,
-            1.5,
-            ray.YELLOW,
-        )
-        ray.draw_cube(
-            self.pos,
-            1,
-            1,
-            1,
-            self.zone_color(),
-        )
 
 
 class Priority_Zone(Base_Zone):
+    TYPE_COLOR = ray.PURPLE
+
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
         self.mesh = ray.gen_mesh_torus(0.25, float(zone.max_drones), 10, 15)
         self.model = ray.load_model_from_mesh(self.mesh)
-
-    def drawzone(self) -> None:
-        ray.draw_cube_wires(
-            self.pos,
-            1.5,
-            1.5,
-            1.5,
-            ray.PURPLE,
-        )
-        ray.draw_cube(
-            self.pos,
-            1,
-            1,
-            1,
-            self.zone_color(),
-        )
 
 
 # "blocked", "restricted", "priority
@@ -187,8 +140,8 @@ class Wire:
         self.connection = connection
         self.zone_list = zone_list
         self.cible = self.find_zone()
-        self.cible_pos_1 = tuple_to_vector3(self.cible[0].pos)
-        self.cible_pos_2 = tuple_to_vector3(self.cible[1].pos)
+        self.cible_pos_1 = self.cible[0].pos
+        self.cible_pos_2 = self.cible[1].pos
         self.mesh_gen()
 
     def find_zone(self) -> tuple[Base_Zone, Base_Zone]:
@@ -202,14 +155,9 @@ class Wire:
 
     def mesh_gen(self) -> None:
         # lenght = ray.vector3_distance(self.cible_pos_1, self.cible_pos_2)
-        pos = Pos3d(self.cible_pos_1.x, self.cible_pos_1.y, self.cible_pos_1.z) - Pos3d(self.cible_pos_2.x, self.cible_pos_2.y, self.cible_pos_2.z)
-        lenght = hypot(pos.x, pos.y)
-        self.midel = ray.vector3_scale(
-            ray.vector3_add(self.cible_pos_1, self.cible_pos_2), 0.5
-        )
-        way = ray.vector3_normalize(
-            ray.vector3_subtract(self.cible_pos_1, self.cible_pos_2)
-        )
+        diff = Pos3d(self.cible_pos_1) - Pos3d(self.cible_pos_2)
+        lenght = hypot(*diff) * 2
+        way = ray.vector3_normalize(tuple(diff))
         y_up = Vector3(0, 1, 0)
         self.axe = ray.vector3_cross_product(y_up, way)
         self.angle = acos(ray.vector3_dot_product(y_up, way))
@@ -217,13 +165,17 @@ class Wire:
         self.model = ray.load_model_from_mesh(self.mesh)
 
     def drawwire(self) -> None:
-        ray.draw_model_wires_ex(
+        ray.draw_model_ex(
             self.model,
-            self.midel,
+            tuple(self.cible_pos_2),
             self.axe,
             degrees(self.angle),
             Vector3(0.5, 0.5, 0.5),
-            THEME_COLOR["invyziblmepatropkanmem"],
+            (
+                THEME_COLOR["invyziblmepatropkanmem"]
+                if self.cible[0].zone_color != self.cible[1].zone_color
+                else self.cible[0].what_color()
+            ),
         )
 
 
@@ -234,5 +186,3 @@ def printable_Wire(
     for i in connection:
         wire_print.append(Wire(i, zone_list))
     return wire_print
-
-
