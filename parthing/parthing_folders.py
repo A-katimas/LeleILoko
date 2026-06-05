@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator, ConfigDict
 from use_terminal.color import color
-from typing import Optional, Dict
+from typing import Optional, Dict , Any
 
 VALID_ZONE_TYPES = {"normal", "blocked", "restricted", "priority"}
 
@@ -13,7 +13,7 @@ class Zone(BaseModel):
     z: int = 0
     zone_type: str = "normal"
     color: Optional[str] = None
-    max_drones: int = 1
+    max_drones: int = 1 
     drone_in_turn: list[int] = [0]
 
     @field_validator("zone_type")
@@ -63,13 +63,12 @@ class MapData(BaseModel):
     def model_post_init(self, __context):
         self.get_zone(self.start).max_drones = self.nb_drones
         self.get_zone(self.end).max_drones = self.nb_drones
-        self.get_zone(self.start).drone_in_turn[0] = self.nb_drones
 
     def append_turn(self):
         for i in self.zones:
-            i.drone_in_turn.append(0)
+            i.drone_in_turn.append(i.drone_in_turn[-1])
 
-    def get_zone(self, name: str | None) -> Zone:
+    def get_zone(self, name: str | None) -> Zone | Any:
         if name == None:
             return None
         for z in self.zones:

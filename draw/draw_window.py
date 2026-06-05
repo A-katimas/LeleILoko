@@ -117,12 +117,11 @@ class WindowUse:
 #                 )
 
 
-def loop_mouv_drone(window: WindowUse) -> bool:
+def loop_mouv_drone(window: WindowUse , turn : int) -> bool:
+    # for i in window.drones_logique:
+    #     i.return_to_the_past()
     for i in window.drones_logique:
-        i.return_to_the_past()
-    for i in window.drones_logique:
-        i.move()
-
+        i.move(turn)
     window.drones_logique[0].print_all_zone()
     if all(drone.drone_finished for drone in window.drones_logique):
         return True

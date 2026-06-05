@@ -3,7 +3,8 @@ import pyray as ray
 from pyray import Vector3
 from parthing.parthing_folders import Zone, Connection
 from use_terminal.color import THEME_COLOR
-from math import acos, degrees
+from math import acos, degrees, hypot
+from use_terminal.vector import Pos3d
 
 
 def tuple_to_vector3(
@@ -31,7 +32,7 @@ class Base_Zone(ABC):
                 THEME_COLOR[str(self.zone.color)][0],
                 THEME_COLOR[str(self.zone.color)][1],
                 THEME_COLOR[str(self.zone.color)][2],
-                THEME_COLOR[str(self.zone.color)][3],
+                max(THEME_COLOR[str(self.zone.color)][3]-150, 10),
             )
         else:
             return self.rainbow_color()
@@ -200,7 +201,9 @@ class Wire:
         return (zone_a, zone_b)
 
     def mesh_gen(self) -> None:
-        lenght = ray.vector3_distance(self.cible_pos_1, self.cible_pos_2)
+        # lenght = ray.vector3_distance(self.cible_pos_1, self.cible_pos_2)
+        pos = Pos3d(self.cible_pos_1.x, self.cible_pos_1.y, self.cible_pos_1.z) - Pos3d(self.cible_pos_2.x, self.cible_pos_2.y, self.cible_pos_2.z)
+        lenght = hypot(pos.x, pos.y)
         self.midel = ray.vector3_scale(
             ray.vector3_add(self.cible_pos_1, self.cible_pos_2), 0.5
         )
@@ -210,7 +213,7 @@ class Wire:
         y_up = Vector3(0, 1, 0)
         self.axe = ray.vector3_cross_product(y_up, way)
         self.angle = acos(ray.vector3_dot_product(y_up, way))
-        self.mesh = ray.gen_mesh_cylinder(1, lenght, 8)
+        self.mesh = ray.gen_mesh_cylinder(0.25, lenght, 8)
         self.model = ray.load_model_from_mesh(self.mesh)
 
     def drawwire(self) -> None:
