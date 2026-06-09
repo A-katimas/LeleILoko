@@ -99,25 +99,6 @@ class WindowUse:
     #             dx = draweDrone 11 → final_torture5
 
 
-# r_a.pos[0] - drawer_b.pos[0]
-#             dy = drawer_a.pos[1] - drawer_b.pos[1]
-#             dz = drawer_a.pos[2] - drawer_b.pos[2]
-#             distance = (dx**2 + dy**2 + dz**2) ** 0.5
-#             if distance < 1.0 and distance > 0:
-#                 # vecteur de répulsion normalisé
-#                 force = 2
-#                 drawer_a.repulsion_offset = (
-#                     drawer_a.repulsion_offset[0] + (dx / distance) * force,
-#                     0.0,
-#                     drawer_a.repulsion_offset[2] + (dz / distance) * force,
-#                 )
-#                 drawer_b.pos = (
-#                     drawer_b.pos[0] - (dx / distance) * force,
-#                     drawer_b.pos[1] - (dy / distance) * force,
-#                     drawer_b.pos[2] - (dz / distance) * force,
-#                 )
-
-
 def loop_mouv_drone(window: WindowUse, turn: int) -> bool:
     # for i in window.drones_logique:
     #     i.return_to_the_past()
@@ -132,10 +113,6 @@ def loop_mouv_drone(window: WindowUse, turn: int) -> bool:
 def loop_begin3d(window: WindowUse, move_delta: float, delta: float) -> None:
     window.draw_evironement()
     window.draw_zone_wire()
-    # for i in window.drones_drowers:
-    # i.repulsion_offset = (0.0, 0.0, 0.0)
-
-    # window.check_collision()
 
     for i in window.drones_drowers:
         i.lerp(move_delta)

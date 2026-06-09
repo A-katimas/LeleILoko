@@ -52,7 +52,7 @@ def main() -> None:
             ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
 
             key_pressed()
-            if time.time() - start > 1 and finish == False:
+            if time.time() - start > 1 and not finish:
                 start = time.time()
                 print(chose_color(f"\tturn {turn}", turn % 30))
                 finish = loop_mouv_drone(window, turn)

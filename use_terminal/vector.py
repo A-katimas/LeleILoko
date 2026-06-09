@@ -1,18 +1,30 @@
-class Vector:
-    CLASS_LEN = 0
-    DIM_ORDER = "xyzabcdef"
+from typing import Any, Iterator, cast, Iterable, Self
 
-    def __init__(self, *args):
+
+class Vector:
+    CLASS_LEN: int = 0
+    DIM_ORDER: str = "xyzabcdef"
+
+    def __init__(
+        self,
+        *args: int
+        | float
+        | tuple[int | float, ...]
+        | list[int | float]
+        | list[int]
+        | list[float]
+        | None,
+    ) -> None:
         if self.__iscompatible(args):
-            self._dim_pos = args
-        elif self.__iscompatible(args[0]):
-            self._dim_pos = args[0]
+            self._dim_pos = tuple(cast(tuple[int | float, ...], args))
+        elif len(args) == 1 and self.__iscompatible(args[0]):
+            self._dim_pos = tuple(cast(Iterable[int | float], args[0]))
         else:
             raise ValueError(
                 f"cant initialise {self.__class__.__name__} with {args}"
             )
 
-    def __add__(self, other):
+    def __add__(self, other: Any) -> Self:
         if self.__iscompatible(other):
             return self.__class__(
                 tuple(
@@ -24,7 +36,7 @@ class Vector:
             )
         raise TypeError(f"cant add {self} to {other}")
 
-    def __sub__(self, other):
+    def __sub__(self, other: Any) -> Self:
         if self.__iscompatible(other):
             return self.__class__(
                 tuple(
@@ -36,13 +48,18 @@ class Vector:
             )
         raise TypeError(f"cant sub {self} to {other}")
 
-    def __mul__(self, other):
+    def __mul__(self, other: Any | int | float) -> Self:
         if self.__iscompatible(other):
             return self.__class__(
                 tuple(
                     map(
                         lambda a_b: a_b[0] * a_b[1],
-                        [(a, b) for a, b in zip(self, other)],
+                        [
+                            (a, b)
+                            for a, b in zip(
+                                self, cast(Iterable[int | float], other)
+                            )
+                        ],
                     )
                 )
             )
@@ -58,7 +75,7 @@ class Vector:
 
         raise TypeError(f"cant mul {self} to {other}")
 
-    def __truediv__(self, other):
+    def __truediv__(self, other: Any) -> Self:
         if self.__iscompatible(other):
             return self.__class__(
                 tuple(
@@ -79,7 +96,7 @@ class Vector:
             )
         raise TypeError(f"cant div {self} to {other}")
 
-    def __floordiv__(self, other):
+    def __floordiv__(self, other: Any) -> Self:
         if self.__iscompatible(other):
             return self.__class__(
                 tuple(
@@ -100,7 +117,7 @@ class Vector:
             )
         raise TypeError(f"cant floordiv {self} to {other}")
 
-    def __iscompatible(self, other):
+    def __iscompatible(self, other: Any) -> bool:
         if (
             hasattr(other, "__iter__")
             and hasattr(other, "__len__")
@@ -110,31 +127,37 @@ class Vector:
             return True
         return False
 
+    # def abs_diff(self, other: Any) -> int | float:
+    #     if self.__iscompatible(other):
+    #         return cast(int | float, sum(...))
+
     @property
-    def pos(self):
+    def pos(self) -> tuple[int | float, ...]:
         return tuple(self._dim_pos)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[int | float]:
         for dim in self._dim_pos:
             yield dim
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.CLASS_LEN
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}({", ".join([str(dim) for dim in self._dim_pos])})"
+    def __repr__(self) -> str:
+        clsname = self.__class__.__name__
+        return f"{clsname}({", ".join([str(dim) for dim in self._dim_pos])})"
 
-    def __str__(self):
-        return f"{self.__class__.__name__}({", ".join([str(dim) for dim in self._dim_pos])})"
+    def __str__(self) -> str:
+        clsname = self.__class__.__name__
+        return f"{clsname}({", ".join([str(dim) for dim in self._dim_pos])})"
 
-    def __format__(self, format_spec):
+    def __format__(self, format_spec: Any) -> str:
         result = []
         for i in range(self.CLASS_LEN):
             if self.DIM_ORDER[i] in format_spec:
                 result.append(self._dim_pos[i])
         return "(" + " ".join([str(a) for a in result]) + ")"
 
-    def __round__(self, ndigits=None):
+    def __round__(self, ndigits: Any) -> Self:
         return self.__class__(
             tuple(
                 map(
@@ -144,33 +167,40 @@ class Vector:
             )
         )
 
-    def __eq__(self, value) -> bool:
+    def __eq__(self, value: Any) -> bool:
         if self.__iscompatible(value):
             return all([(a == b) for a, b in zip(self, value)])
         raise TypeError(f"cant compare {self} to {value}")
 
-    def abs_diff(self, other) -> int:
+    def abs_diff(self, other: Any) -> int | float:
         if self.__iscompatible(other):
-            return sum(
-                map(
-                    lambda a_b: max(a_b) - min(a_b),
-                    [(a, b) for a, b in zip(self, other)],
-                )
+            return cast(
+                int | float,
+                sum(
+                    map(
+                        lambda a_b: max(a_b) - min(a_b),
+                        [(a, b) for a, b in zip(self, other)],
+                    )
+                ),
             )
         raise TypeError(f"cant floordiv {self} to {other}")
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return any(self._dim_pos)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(tuple(self))
 
-    def __getitem__(self, key):
+    def __getitem__(
+        self, key: Any
+    ) -> int | float | tuple[int | float, ...] | Any:
         return self._dim_pos.__getitem__(key)
 
-    def __getattr__(self, name):
-        if name in self.DIM_ORDER[0 : self.CLASS_LEN]:
-            return self[self.DIM_ORDER.find(name)]
+    def __getattr__(self, name: str) -> int | float | None:
+        if name in self.DIM_ORDER[0: self.CLASS_LEN]:
+            value = self._dim_pos[self.DIM_ORDER.find(name)]
+            return value
+        return None
 
 
 class Pos3d(Vector):
@@ -199,7 +229,3 @@ class ColorRGBA(Vector):
 # print(d)
 # print(c + d)
 # print(a // b)
-# print(
-#     f"{(((a + (1, 2, 3)) + [1, 2, 3]) + {1: "a", 2: "b", 3: "c"}) + {1, 2, 3}:xz}\n"
-#     + f"{(((a + (1, 2, 3)) + [1, 2, 3]) + {1: "a", 2: "b", 3: "c"}) + {1, 2, 3}:xyz}"
-# )

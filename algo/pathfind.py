@@ -1,10 +1,9 @@
 from parthing import MapData, Zone
-from collections import deque
 from use_terminal.color import chose_color
 from use_terminal.vector import Pos3d
 
 
-def print_zone(zone: Zone):
+def print_zone(zone: Zone) -> None:
     print()
     print(f"name: {zone.name}")
     print(f"x: {zone.x}")
@@ -12,14 +11,11 @@ def print_zone(zone: Zone):
     print(f"z: {zone.z}")
     print(f"zone_type: {zone.zone_type}")
     print(f"max_drones: {zone.max_drones}")
-    # for i in zone.drone_in_turn:
     print(f"drone_in: {zone.drone_in_turn}")
     print()
 
 
 class Drone:
-    mapturn: list = []
-
     def __init__(self, map: MapData, id_drone: int):
         self.id_drone = id_drone
         self.map = map
@@ -34,7 +30,7 @@ class Drone:
         zone = next(e for e in self.map.zones if self.map.start == e.name)
         return (zone.x, zone.y)
 
-    def print_all_zone(self):
+    def print_all_zone(self) -> None:
         for i in self.map.zones:
             print_zone(i)
 
@@ -60,8 +56,7 @@ class Drone:
                 for neighbor in self.map.get_neighbors(actual_zone):
                     index = 1
                     if neighbor.capacity_is_valid(turn):
-                        # print("turn" , turn)
-                        # print(f"name {neighbor.name}{neighbor.drone_in_turn}"
+
                         new_path = path + [neighbor.name]
                         if neighbor.zone_type == "restricted":
                             new_path = new_path + [neighbor.name]
@@ -102,10 +97,6 @@ class Drone:
                                 )
 
                                 root_path[index].append(new_path)
-
-                        # if neighbor.zone_type == "restricted":
-                        #     new_path = new_path + [neighbor.name]
-                        # waiting_queue.append(neighbor.name)
                     else:
                         print("qokijeszgfhbojuik")
                         root_path[1].append(path + [path[-1]])
@@ -138,16 +129,15 @@ class Drone:
             prec_zone = real_zone
         self.path = [self.map.get_zone(name) for name in path]
 
-    def move(self, turn: int):
+    def move(self, turn: int) -> None:
 
         self.drone_moved = False
-        if self.act_zone == self.map.end:
+        if turn >= len(self.path):
             self.prec_pos = self.pos_xyz
             print(f"drone {self.id_drone} arrived ")
             self.drone_finished = True
 
         elif len(self.path) > turn:
-            # self.path = self.reconstruct_path(self.algo_bfs())
             if self.path:
                 print(chose_color("drone path ", self.id_drone % 30))
                 for i in self.path:
@@ -157,7 +147,7 @@ class Drone:
                         chose_color(
                             f"\ndrone {self.id_drone}", self.id_drone % 30
                         ),
-                        f"moved to {self.path[1].name}",
+                        f"moved to {self.path[turn].name}",
                     )
                     self.prec_pos, self.pos_xyz = (
                         self.pos_xyz,

@@ -48,16 +48,10 @@ debug:
 	@uv run python -m pdb $(SRC)
 
 lint:
-	@uv run $(PYTHON) -m flake8 . --extend-exclude .venv
+	@uv run $(PYTHON) -m flake8 . --max-line-length=79 --extend-exclude .venv
 	@uv run $(PYTHON) -m mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
-
-lint-strict:
-	@echo ">>> flake8 (strict)..."
-	$(UV) run flake8 --max-line-length=79 .venv
-	@echo ">>> mypy --strict..."
-	$(UV) run mypy mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs .
-	@echo ">>> Lint strict OK !"
+lint-strict: lint
 
 clean:
 	@echo ">>> Suppression des fichiers temporaires..."
