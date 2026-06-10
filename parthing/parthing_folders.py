@@ -84,7 +84,7 @@ class MapData(BaseModel):
         raise ValueError(f"Zone {name} not found")
 
     def get_neighbors(self, zone_name: str) -> list[Zone]:
-        zones = []
+        zones: list[Zone] = []
         seen: set[str] = set()
         for i in self.connections:
             if zone_name == i.a and i.b not in seen:
@@ -96,8 +96,8 @@ class MapData(BaseModel):
         return zones
 
 
-def parse_metadata(raw: str) -> Dict:
-    data = {}
+def parse_metadata(raw: str) -> Dict[str, str]:
+    data: dict[str, str] = {}
 
     raw = raw.strip()[1:-1]  # enlever [ ]
     parts = raw.split()

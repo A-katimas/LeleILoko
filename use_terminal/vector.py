@@ -127,10 +127,6 @@ class Vector:
             return True
         return False
 
-    # def abs_diff(self, other: Any) -> int | float:
-    #     if self.__iscompatible(other):
-    #         return cast(int | float, sum(...))
-
     @property
     def pos(self) -> tuple[int | float, ...]:
         return tuple(self._dim_pos)
@@ -151,7 +147,7 @@ class Vector:
         return f"{clsname}({", ".join([str(dim) for dim in self._dim_pos])})"
 
     def __format__(self, format_spec: Any) -> str:
-        result = []
+        result: list[int | float] = []
         for i in range(self.CLASS_LEN):
             if self.DIM_ORDER[i] in format_spec:
                 result.append(self._dim_pos[i])
@@ -191,13 +187,11 @@ class Vector:
     def __hash__(self) -> int:
         return hash(tuple(self))
 
-    def __getitem__(
-        self, key: Any
-    ) -> int | float | tuple[int | float, ...] | Any:
+    def __getitem__(self, key: int) -> int | float:
         return self._dim_pos.__getitem__(key)
 
     def __getattr__(self, name: str) -> int | float | None:
-        if name in self.DIM_ORDER[0: self.CLASS_LEN]:
+        if name in self.DIM_ORDER[0 : self.CLASS_LEN]:
             value = self._dim_pos[self.DIM_ORDER.find(name)]
             return value
         return None
