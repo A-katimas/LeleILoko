@@ -120,7 +120,7 @@ def parse_zone(line: str, line_no: int) -> tuple[str, Zone]:
 
         metadata = {}
         if "[" in line:
-            meta_str = line[line.index("[") :]
+            meta_str = line[line.index("["):]
             metadata = parse_metadata(meta_str)
 
         zone_type = metadata.get("zone", "normal")

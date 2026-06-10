@@ -109,7 +109,7 @@ class Wire:
         self.cible = self.find_base_zone()
         self.cible_pos_1 = self.cible[0].pos
         self.cible_pos_2 = self.cible[1].pos
-        self.radius = sqrt(connection.capacity)*0.2
+        self.radius = sqrt(connection.capacity) * 0.2
         # min(
         #     max(log2(max(log2(connection.capacity), 0.25)), 0.25), 0.6
         # )

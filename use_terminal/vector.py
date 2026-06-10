@@ -191,7 +191,7 @@ class Vector:
         return self._dim_pos.__getitem__(key)
 
     def __getattr__(self, name: str) -> int | float | None:
-        if name in self.DIM_ORDER[0 : self.CLASS_LEN]:
+        if name in self.DIM_ORDER[0: self.CLASS_LEN]:
             value = self._dim_pos[self.DIM_ORDER.find(name)]
             return value
         return None
