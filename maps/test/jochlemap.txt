@@ -1,0 +1,270 @@
+# ==========================================
+# CONFIGURATION GÉNÉRALE
+# ==========================================
+nb_drones: 100
+
+# Points d'entrée et de sortie uniques
+start_hub: super_base_start -2 13 [color=green]
+end_hub: zone_evacuation_goal 21 13 [color=red]
+
+# ==========================================
+# DÉFINITION DES 100+ ZONES (HUBS)
+# ==========================================
+
+# --- SECTION A : L'ENTRÉE COMPACTE (Zones 1 à 15) ---
+hub: ent_A1 1 3 [zone=normal max_drones=20 color=blue]
+hub: ent_A2 1 5 [zone=normal max_drones=20 color=blue]
+hub: ent_A3 1 7 [zone=normal max_drones=20 color=blue]
+hub: ent_A4 1 9 [zone=normal max_drones=20 color=blue]
+hub: ent_A5 1 11 [zone=normal max_drones=20 color=blue]
+hub: ent_A6 1 13 [zone=normal max_drones=20 color=blue]
+hub: ent_A7 1 15 [zone=normal max_drones=20 color=blue]
+hub: ent_A8 1 17 [zone=normal max_drones=20 color=blue]
+hub: ent_A9 1 19 [zone=normal max_drones=20 color=blue]
+
+hub: ent_B1 2 5 [zone=normal max_drones=15 color=blue]
+hub: ent_B2 2 9 [zone=normal max_drones=15 color=blue]
+hub: ent_B3 2 13 [zone=normal max_drones=15 color=blue]
+hub: ent_B4 2 17 [zone=normal max_drones=15 color=blue]
+
+hub: ent_C1 4 7 [zone=priority max_drones=10 color=green]
+hub: ent_C2 4 18 [zone=priority max_drones=10 color=green]
+
+# --- SECTION B : LE LABYRINTHE SUPÉRIEUR (Zones 16 à 40) ---
+hub: lab_sup_1 5 20 [zone=normal]
+hub: lab_sup_2 6 20 [zone=normal]
+hub: lab_sup_3 7 20 [zone=normal]
+hub: lab_sup_4 8 20 [zone=normal]
+hub: lab_sup_5 9 20 [zone=normal]
+hub: lab_sup_6 10 20 [zone=normal]
+hub: lab_sup_7 11 20 [zone=blocked color=gray]
+hub: lab_sup_8 12 20 [zone=normal]
+hub: lab_sup_9 13 20 [zone=normal]
+hub: lab_sup_10 14 20 [zone=normal]
+hub: lab_sup_11 15 20 [zone=normal]
+hub: lab_sup_12 16 20 [zone=normal]
+hub: lab_sup_13 17 20 [zone=normal]
+
+hub: lab_sup_14 6 19 [zone=normal]
+hub: lab_sup_15 8 19 [zone=normal]
+hub: lab_sup_16 10 19 [zone=normal]
+hub: lab_sup_17 12 19 [zone=normal]
+hub: lab_sup_18 14 19 [zone=normal]
+hub: lab_sup_19 16 19 [zone=normal]
+
+hub: lab_sup_20 7 17 [zone=restricted color=yellow]
+hub: lab_sup_21 9 17 [zone=restricted color=yellow]
+hub: lab_sup_22 11 17 [zone=restricted color=yellow]
+hub: lab_sup_23 13 17 [zone=restricted color=yellow]
+hub: lab_sup_24 15 17 [zone=restricted color=yellow]
+hub: lab_sup_25 17 17 [zone=priority color=green]
+
+# --- SECTION C : LE LABYRINTHE INFÉRIEUR (Zones 41 à 65) ---
+hub: lab_inf_1 5 4 [zone=normal]
+hub: lab_inf_2 6 4 [zone=normal]
+hub: lab_inf_3 7 4 [zone=normal]
+hub: lab_inf_4 8 4 [zone=normal]
+hub: lab_inf_5 9 4 [zone=normal]
+hub: lab_inf_6 10 4 [zone=normal]
+hub: lab_inf_7 11 4 [zone=normal]
+hub: lab_inf_8 12 4 [zone=normal]
+hub: lab_inf_9 13 4 [zone=normal]
+hub: lab_inf_10 14 4 [zone=normal]
+hub: lab_inf_11 15 4 [zone=normal]
+hub: lab_inf_12 16 4 [zone=normal]
+hub: lab_inf_13 17 4 [zone=normal]
+
+hub: lab_inf_14 6 5 [zone=normal]
+hub: lab_inf_15 8 5 [zone=normal]
+hub: lab_inf_16 10 5 [zone=normal]
+hub: lab_inf_17 12 5 [zone=blocked color=gray]
+hub: lab_inf_18 14 5 [zone=normal]
+hub: lab_inf_19 16 5 [zone=normal]
+
+hub: lab_inf_20 7 8 [zone=restricted color=yellow]
+hub: lab_inf_21 9 8 [zone=restricted color=yellow]
+hub: lab_inf_22 11 8 [zone=restricted color=yellow]
+hub: lab_inf_23 13 8 [zone=restricted color=yellow]
+hub: lab_inf_24 15 8 [zone=restricted color=yellow]
+hub: lab_inf_25 17 8 [zone=priority color=green]
+
+# --- SECTION D : L'AUTOROUTE CENTRALE RESTREINTE (Zones 66 à 80) ---
+# Chemin le plus court en distance, mais chaque zone coûte 2 tours et la capacité est ultra-faible !
+hub: auto_1 5 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_2 6 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_3 7 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_4 8 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_5 9 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_6 10 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_7 11 13 [zone=restricted max_drones=1 color=yellow]
+hub: auto_8 12 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_9 13 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_10 14 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_11 15 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_12 16 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_13 17 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_14 18 13 [zone=restricted max_drones=2 color=yellow]
+hub: auto_15 19 13 [zone=restricted max_drones=2 color=yellow]
+
+# --- SECTION E : LA SÉCURISATION ET SORTIE MASSIVE (Zones 81 à 102) ---
+hub: tri_haut_1 18 19 [zone=normal max_drones=10]
+hub: tri_haut_2 18 20 [zone=normal max_drones=10]
+hub: tri_bas_1 18 5 [zone=normal max_drones=10]
+hub: tri_bas_2 18 4 [zone=normal max_drones=10]
+
+hub: entonnoir_1 20 8 [zone=priority max_drones=4 color=green]
+hub: entonnoir_2 20 11 [zone=priority max_drones=4 color=green]
+hub: entonnoir_3 20 13 [zone=priority max_drones=4 color=green]
+hub: entonnoir_4 20 16 [zone=priority max_drones=4 color=green]
+
+hub: pre_sortie_1 20 10 [zone=normal max_drones=5]
+hub: pre_sortie_2 22 13 [zone=normal max_drones=5]
+hub: pre_sortie_3 20 15 [zone=normal max_drones=5]
+
+# Culs-de-sac / Distractions vicieuses pour tromper un Dijkstra naïf
+hub: piege_nord_1 10 22 [zone=priority max_drones=50 color=green]
+hub: piege_nord_2 11 22 [zone=priority max_drones=50 color=green]
+hub: piege_nord_fin 13 22 [zone=blocked color=gray]
+
+hub: piege_sud_1 10 2 [zone=priority max_drones=50 color=green]
+hub: piege_sud_2 11 2 [zone=priority max_drones=50 color=green]
+hub: piege_sud_fin 13 2 [zone=blocked color=gray]
+
+# ==========================================
+# SÉQUENCE DES CONNEXIONS (EDGES)
+# ==========================================
+
+# Connexions de la Super Base de départ vers le premier rideau
+connection: super_base_start-ent_A1 [max_link_capacity=5]
+connection: super_base_start-ent_A2 [max_link_capacity=5]
+connection: super_base_start-ent_A3 [max_link_capacity=5]
+connection: super_base_start-ent_A4 [max_link_capacity=5]
+connection: super_base_start-ent_A5 [max_link_capacity=20]
+connection: super_base_start-ent_A6 [max_link_capacity=5]
+connection: super_base_start-ent_A7 [max_link_capacity=5]
+connection: super_base_start-ent_A8 [max_link_capacity=5]
+connection: super_base_start-ent_A9 [max_link_capacity=5]
+
+# Maillage interne du premier rideau
+connection: ent_A1-ent_B1
+connection: ent_A2-ent_B1
+connection: ent_A3-ent_B1
+connection: ent_A4-ent_B2
+connection: ent_A5-ent_B2
+connection: ent_A6-ent_B3
+connection: ent_A7-ent_B3
+connection: ent_A8-ent_B4
+connection: ent_A9-ent_B4
+
+connection: ent_B1-ent_C1
+connection: ent_B2-ent_C1
+connection: ent_B3-ent_C2
+connection: ent_B4-ent_C2
+
+# Dispatching vers les 3 grandes routes (Haut, Centre, Bas)
+connection: ent_C1-lab_sup_1 [max_link_capacity=5]
+connection: ent_C1-auto_1 [max_link_capacity=2]
+connection: ent_B2-auto_1 [max_link_capacity=2]
+connection: ent_B3-auto_1 [max_link_capacity=2]
+connection: ent_C2-lab_inf_1 [max_link_capacity=5]
+
+# --- Connexions : Route du Haut (Labyrinthe Supérieur) ---
+connection: lab_sup_1-lab_sup_2
+connection: lab_sup_2-lab_sup_3
+connection: lab_sup_3-lab_sup_4
+connection: lab_sup_4-lab_sup_5
+connection: lab_sup_5-lab_sup_6
+# Pas de connexion vers lab_sup_7 car il est bloqué !
+connection: lab_sup_6-lab_sup_16
+connection: lab_sup_16-lab_sup_17
+connection: lab_sup_17-lab_sup_8
+connection: lab_sup_8-lab_sup_9
+connection: lab_sup_9-lab_sup_10
+connection: lab_sup_10-lab_sup_11
+connection: lab_sup_11-lab_sup_12
+connection: lab_sup_12-lab_sup_13
+
+connection: lab_sup_1-lab_sup_14
+connection: lab_sup_14-lab_sup_15
+connection: lab_sup_15-lab_sup_20
+connection: lab_sup_20-lab_sup_21
+connection: lab_sup_21-lab_sup_22
+connection: lab_sup_22-lab_sup_23
+connection: lab_sup_23-lab_sup_24
+connection: lab_sup_24-lab_sup_25
+connection: lab_sup_25-lab_sup_13
+
+# Branches vers les pièges sans issue du Nord
+connection: lab_sup_4-piege_nord_1
+connection: piege_nord_1-piege_nord_2
+connection: piege_nord_2-piege_nord_fin
+
+# --- Connexions : L'Autoroute Centrale Restreinte ---
+connection: auto_1-auto_2 [max_link_capacity=1]
+connection: auto_2-auto_3 [max_link_capacity=1]
+connection: auto_3-auto_4 [max_link_capacity=1]
+connection: auto_4-auto_5 [max_link_capacity=1]
+connection: auto_5-auto_6 [max_link_capacity=1]
+connection: auto_6-auto_7 [max_link_capacity=1]
+connection: auto_7-auto_8 [max_link_capacity=1]
+connection: auto_8-auto_9 [max_link_capacity=1]
+connection: auto_9-auto_10 [max_link_capacity=1]
+connection: auto_10-auto_11 [max_link_capacity=1]
+connection: auto_11-auto_12 [max_link_capacity=1]
+connection: auto_12-auto_13 [max_link_capacity=1]
+connection: auto_13-auto_14 [max_link_capacity=1]
+connection: auto_14-auto_15 [max_link_capacity=1]
+
+# --- Connexions : Route du Bas (Labyrinthe Inférieur) ---
+connection: lab_inf_1-lab_inf_2
+connection: lab_inf_2-lab_inf_3
+connection: lab_inf_3-lab_inf_4
+connection: lab_inf_4-lab_inf_5
+connection: lab_inf_5-lab_inf_6
+connection: lab_inf_6-lab_inf_7
+connection: lab_inf_7-lab_inf_8
+connection: lab_inf_8-lab_inf_9
+connection: lab_inf_9-lab_inf_10
+connection: lab_inf_10-lab_inf_11
+connection: lab_inf_11-lab_inf_12
+connection: lab_inf_12-lab_inf_13
+
+connection: lab_inf_1-lab_inf_14
+connection: lab_inf_14-lab_inf_15
+connection: lab_inf_15-lab_inf_20
+connection: lab_inf_20-lab_inf_21
+connection: lab_inf_21-lab_inf_22
+connection: lab_inf_22-lab_inf_23
+connection: lab_inf_23-lab_inf_24
+connection: lab_inf_24-lab_inf_25
+connection: lab_inf_25-lab_inf_13
+
+# Branches vers les pièges sans issue du Sud
+connection: lab_inf_4-piege_sud_1
+connection: piege_sud_1-piege_sud_2
+connection: piege_sud_2-piege_sud_fin
+
+# --- Connexions : Entonnoir de Sortie Massif ---
+connection: lab_sup_13-tri_haut_1
+connection: lab_sup_25-tri_haut_2
+connection: auto_15-pre_sortie_2 [max_link_capacity=2]
+connection: lab_inf_13-tri_bas_1
+connection: lab_inf_25-tri_bas_2
+
+connection: tri_haut_1-entonnoir_4
+connection: tri_haut_2-entonnoir_4
+connection: tri_bas_1-entonnoir_1
+connection: tri_bas_2-entonnoir_1
+
+connection: entonnoir_4-entonnoir_3
+connection: entonnoir_1-entonnoir_2
+
+connection: entonnoir_3-pre_sortie_3
+connection: entonnoir_2-pre_sortie_1
+
+connection: pre_sortie_1-pre_sortie_2
+connection: pre_sortie_3-pre_sortie_2
+
+connection: pre_sortie_1-zone_evacuation_goal [max_link_capacity=10]
+connection: pre_sortie_2-zone_evacuation_goal [max_link_capacity=25]
+connection: pre_sortie_3-zone_evacuation_goal [max_link_capacity=10]

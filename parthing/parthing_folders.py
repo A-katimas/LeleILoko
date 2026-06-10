@@ -67,6 +67,18 @@ class MapData(BaseModel):
     start: str
     end: str
 
+    def no_pos_doble(self):
+        remember: None | list[int] = None
+
+        deja_vu = set()
+        for zone in self.zones:
+            if tuple(zone.pos) in deja_vu:
+                raise ValueError(
+                    f"zone with a pos present in multiple zone :\n{zone}"
+                )
+            else:
+                deja_vu.add(tuple(zone.pos))
+
     def model_post_init(self, __context: IncEx) -> None:
         self.get_zone(self.start).max_drones = self.nb_drones
         self.get_zone(self.end).max_drones = self.nb_drones
@@ -120,7 +132,7 @@ def parse_zone(line: str, line_no: int) -> tuple[str, Zone]:
 
         metadata = {}
         if "[" in line:
-            meta_str = line[line.index("["):]
+            meta_str = line[line.index("[") :]
             metadata = parse_metadata(meta_str)
 
         zone_type = metadata.get("zone", "normal")
@@ -217,11 +229,14 @@ def parse_file(path: str) -> MapData:
             raise ValueError(
                 0, f"Unknown zone in connection '{conn.a}-{conn.b}'"
             )
-
-    return MapData(
+    finish = MapData(
         nb_drones=nb_drones,
         zones=zones,
         connections=connections,
         start=start,
         end=end,
     )
+
+    finish.no_pos_doble()
+
+    return finish
