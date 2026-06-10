@@ -3,16 +3,8 @@ import pyray as ray
 from pyray import Vector3
 from parthing.parthing_folders import Zone, Connection
 from use_terminal.color import THEME_COLOR
-from math import acos, degrees, hypot
+from math import acos, degrees, hypot, log2, sqrt
 from use_terminal.vector import Pos3d
-
-
-def tuple_to_vector3(
-    tup: tuple[int | float, int | float, int | float],
-) -> Vector3:
-    if len(tup) != 3:
-        raise ValueError("Tuple must have 3 values")
-    return Vector3(float(tup[0]), float(tup[1]), float(tup[2]))
 
 
 class Base_Zone(ABC):
@@ -23,34 +15,19 @@ class Base_Zone(ABC):
         self.zone = zone
         self.pos = pos
         self.zone_color = zone.color
-        self.mesh = ray.gen_mesh_torus(
-            0.05, float(zone.max_drones) * 1.5, 15, 20
+        self.size: Pos3d = Pos3d(
+            max(log2(max(log2(zone.max_drones), 0.5)), 0.5),
+            max(log2(max(log2(zone.max_drones), 0.5)), 0.5),
+            max(log2(max(log2(zone.max_drones), 0.5)), 0.5),
         )
-        self.model = ray.load_model_from_mesh(self.mesh)
 
     def drawzone(self) -> None:
-        ray.draw_cube_wires(
+        ray.draw_cube_wires_v(
             self.pos,
-            1.5,
-            1.5,
-            1.5,
+            tuple(self.size * 1.2),
             self.TYPE_COLOR,
         )
-        ray.draw_cube(
-            self.pos,
-            1,
-            1,
-            1,
-            self.what_color(),
-        )
-        ray.draw_model_wires_ex(
-            self.model,
-            self.pos,
-            Vector3(1, 1, 1),
-            180,
-            Vector3(1, 1, 1),
-            self.what_color(),
-        )
+        ray.draw_cube_v(self.pos, tuple(self.size), self.what_color())
 
     def what_color(self) -> ray.Color:
         if self.zone.color in THEME_COLOR:
@@ -77,10 +54,6 @@ class Normal_Zone(Base_Zone):
 
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
-        self.mesh = ray.gen_mesh_torus(
-            0.05, float(zone.max_drones) * 1.5, 15, 20
-        )
-        self.model = ray.load_model_from_mesh(self.mesh)
 
 
 class Restricted_Zone(Base_Zone):
@@ -88,8 +61,6 @@ class Restricted_Zone(Base_Zone):
 
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
-        self.mesh = ray.gen_mesh_torus(0.25, float(zone.max_drones), 10, 15)
-        self.model = ray.load_model_from_mesh(self.mesh)
 
 
 class Blocked_Zone(Base_Zone):
@@ -97,8 +68,6 @@ class Blocked_Zone(Base_Zone):
 
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
-        self.mesh = ray.gen_mesh_torus(0.25, float(zone.max_drones), 10, 15)
-        self.model = ray.load_model_from_mesh(self.mesh)
 
 
 class Priority_Zone(Base_Zone):
@@ -106,8 +75,6 @@ class Priority_Zone(Base_Zone):
 
     def __init__(self, zone: Zone, pos: tuple[int, int, int]) -> None:
         super().__init__(zone, pos)
-        self.mesh = ray.gen_mesh_torus(0.25, float(zone.max_drones), 10, 15)
-        self.model = ray.load_model_from_mesh(self.mesh)
 
 
 # "blocked", "restricted", "priority
@@ -139,12 +106,16 @@ class Wire:
     ) -> None:
         self.connection = connection
         self.zone_list = zone_list
-        self.cible = self.find_zone()
+        self.cible = self.find_base_zone()
         self.cible_pos_1 = self.cible[0].pos
         self.cible_pos_2 = self.cible[1].pos
+        self.radius = sqrt(connection.capacity)*0.2
+        # min(
+        #     max(log2(max(log2(connection.capacity), 0.25)), 0.25), 0.6
+        # )
         self.mesh_gen()
 
-    def find_zone(self) -> tuple[Base_Zone, Base_Zone]:
+    def find_base_zone(self) -> tuple[Base_Zone, Base_Zone]:
         zone_a = next(
             e for e in self.zone_list if self.connection.a == e.zone.name
         )
@@ -161,7 +132,7 @@ class Wire:
         y_up = Vector3(0, 1, 0)
         self.axe = ray.vector3_cross_product(y_up, way)
         self.angle = acos(ray.vector3_dot_product(y_up, way))
-        self.mesh = ray.gen_mesh_cylinder(0.25, lenght, 8)
+        self.mesh = ray.gen_mesh_cylinder(self.radius, lenght, 8)
         self.model = ray.load_model_from_mesh(self.mesh)
 
     def drawwire(self) -> None:

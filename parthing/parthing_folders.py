@@ -40,6 +40,7 @@ class Zone(BaseModel):
 
 
 class Connection(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
     a: str
     b: str
     capacity: int = 1
@@ -50,6 +51,11 @@ class Connection(BaseModel):
         if value <= 0:
             raise ValueError(color("capacity must be > 0", 240, 150, 150))
         return value
+
+    def find_zone(self, zones: list[Zone]) -> tuple[Zone, Zone]:
+        zone_a = next(e for e in zones if self.a == e.name)
+        zone_b = next(e for e in zones if self.b == e.name)
+        return (zone_a, zone_b)
 
 
 class MapData(BaseModel):
@@ -114,7 +120,7 @@ def parse_zone(line: str, line_no: int) -> tuple[str, Zone]:
 
         metadata = {}
         if "[" in line:
-            meta_str = line[line.index("["):]
+            meta_str = line[line.index("[") :]
             metadata = parse_metadata(meta_str)
 
         zone_type = metadata.get("zone", "normal")

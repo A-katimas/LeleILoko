@@ -1,4 +1,4 @@
-from parthing import MapData, Zone
+from parthing import MapData, Zone, Connection
 from use_terminal.color import chose_color
 from use_terminal.vector import Pos3d
 
@@ -12,6 +12,15 @@ def print_zone(zone: Zone) -> None:
     print(f"zone_type: {zone.zone_type}")
     print(f"max_drones: {zone.max_drones}")
     print(f"drone_in: {zone.drone_in_turn}")
+    print()
+
+
+def print_connection(conex: Connection) -> None:
+    print()
+    print(f"a : {conex.a}")
+    print(f"b : {conex.b}")
+    print(f"capacity : {conex.capacity}")
+    print(f"ocupation_list : {conex.ocupation_list}")
     print()
 
 
@@ -98,7 +107,6 @@ class Drone:
 
                                 root_path[index].append(new_path)
                     else:
-                        print("qokijeszgfhbojuik")
                         root_path[1].append(path + [path[-1]])
 
             turn += 1

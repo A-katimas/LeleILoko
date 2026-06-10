@@ -74,10 +74,7 @@ class WindowUse:
             self.drones_logique.append(drone)
         for e in self.drones_logique:
             self.drones_drowers.append(DroneDrawer(e))
-        # self.simulation = Simulation(self.mapdata, self.drones_logique[0])
-        # print("path simu")
-        # for i in self.simulation.all_path():
-        #     print(i)
+
         print("\nfin simu\n ")
 
     def draw_zone_wire(self) -> None:
@@ -93,18 +90,11 @@ class WindowUse:
         # floor
         self.floorbase.draw_floor()
 
-    # def check_collision(self) -> None:
-    #     for i, drawer_a in enumerate(self.drones_drowers):
-    #         for drawer_b in self.drones_drowers[i + 1 :]:
-    #             dx = draweDrone 11 → final_torture5
-
 
 def loop_mouv_drone(window: WindowUse, turn: int) -> bool:
-    # for i in window.drones_logique:
-    #     i.return_to_the_past()
     for i in window.drones_logique:
         i.move(turn)
-    window.drones_logique[0].print_all_zone()
+    # window.drones_logique[0].print_all_zone()
     if all(drone.drone_finished for drone in window.drones_logique):
         return True
     return False
