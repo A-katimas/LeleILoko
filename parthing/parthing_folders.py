@@ -44,7 +44,7 @@ class Connection(BaseModel):
     a: str
     b: str
     capacity: int = 1
-    ocupation_list: list[int] = []
+    ocupation_list: list[int] = [0]
 
     @field_validator("capacity")
     def check_capacity(cls, value: int) -> int:
@@ -57,6 +57,9 @@ class Connection(BaseModel):
         zone_b = next(e for e in zones if self.b == e.name)
         return (zone_a, zone_b)
 
+    def capacity_is_valid(self, turn: int) -> bool:
+        return self.ocupation_list[turn] < self.capacity
+
 
 class MapData(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
@@ -67,14 +70,12 @@ class MapData(BaseModel):
     start: str
     end: str
 
-    def no_pos_doble(self):
-        remember: None | list[int] = None
-
+    def no_pos_doble(self) -> None:
         deja_vu = set()
         for zone in self.zones:
             if tuple(zone.pos) in deja_vu:
                 raise ValueError(
-                    f"zone with a pos present in multiple zone :\n{zone}"
+                    f"zone with a pos present in multiple zone :\n {zone}"
                 )
             else:
                 deja_vu.add(tuple(zone.pos))
@@ -86,6 +87,8 @@ class MapData(BaseModel):
     def append_turn(self) -> None:
         for i in self.zones:
             i.drone_in_turn.append(i.drone_in_turn[-1])
+        for j in self.connections:
+            j.ocupation_list.append(0)
 
     def get_zone(self, name: str | None) -> Zone | Any:
         if not name:
@@ -94,6 +97,17 @@ class MapData(BaseModel):
             if z.name == name:
                 return z
         raise ValueError(f"Zone {name} not found")
+
+    def get_conextion(
+        self, zone_name_a: str, zone_name_b: str
+    ) -> Connection | None:
+
+        for i in self.connections:
+            if (i.a == zone_name_a and i.b == zone_name_b):
+                return i
+            if (i.a == zone_name_b and i.b == zone_name_a):  # bidirectionnel
+                return i
+        return None
 
     def get_neighbors(self, zone_name: str) -> list[Zone]:
         zones: list[Zone] = []
@@ -132,7 +146,7 @@ def parse_zone(line: str, line_no: int) -> tuple[str, Zone]:
 
         metadata = {}
         if "[" in line:
-            meta_str = line[line.index("[") :]
+            meta_str = line[line.index("["):]
             metadata = parse_metadata(meta_str)
 
         zone_type = metadata.get("zone", "normal")

@@ -16,7 +16,6 @@ def print_zone(zone: Zone) -> None:
 
 
 def print_connection(conex: Connection) -> None:
-    print()
     print(f"a : {conex.a}")
     print(f"b : {conex.b}")
     print(f"capacity : {conex.capacity}")
@@ -43,6 +42,10 @@ class Drone:
         for i in self.map.zones:
             print_zone(i)
 
+    def print_all_connection(self) -> None:
+        for i in self.map.connections:
+            print_connection(i)
+
     def algo_nodes(self) -> list[str]:
         print()
         print(
@@ -65,47 +68,60 @@ class Drone:
                 for neighbor in self.map.get_neighbors(actual_zone):
                     index = 1
                     if neighbor.capacity_is_valid(turn):
+                        conect = self.map.get_conextion(
+                            actual_zone, neighbor.name
+                        )
+                        if conect is not None and conect.capacity_is_valid(
+                            turn
+                        ):
+                            new_path = path + [neighbor.name]
+                            if neighbor.zone_type == "restricted":
+                                new_path = new_path + [neighbor.name]
+                                index += 1
+                                if turn + 1 == len(
+                                    self.map.zones[0].drone_in_turn
+                                ):
+                                    self.map.append_turn()
 
-                        new_path = path + [neighbor.name]
-                        if neighbor.zone_type == "restricted":
-                            new_path = new_path + [neighbor.name]
-                            index += 1
-                            if turn + 1 == len(
-                                self.map.zones[0].drone_in_turn
-                            ):
-                                self.map.append_turn()
-
-                        if visit.get(neighbor.name) is None:
-                            visit[neighbor.name] = (new_path, len(new_path))
-                            root_path[index].append(new_path)
-
-                        # if too short
-                        elif len(visit[neighbor.name][0]) > len(new_path):
-                            visit[neighbor.name] = (new_path, len(new_path))
-                            print("devrait jammais se passer")
-                            root_path[index].append(new_path)
-
-                        # if priority
-                        elif len(visit[neighbor.name][0]) == len(new_path):
-                            if sum(
-                                int(
-                                    self.map.get_zone(zone).zone_type
-                                    == "priority"
-                                )
-                                for zone in new_path
-                            ) > sum(
-                                int(
-                                    self.map.get_zone(zone).zone_type
-                                    == "priority"
-                                )
-                                for zone in visit[neighbor.name][0]
-                            ):
+                            if visit.get(neighbor.name) is None:
                                 visit[neighbor.name] = (
                                     new_path,
                                     len(new_path),
                                 )
-
                                 root_path[index].append(new_path)
+
+                            # if too short
+                            elif len(visit[neighbor.name][0]) > len(new_path):
+                                visit[neighbor.name] = (
+                                    new_path,
+                                    len(new_path),
+                                )
+                                print("devrait jammais se passer")
+                                root_path[index].append(new_path)
+
+                            # if priority
+                            elif len(visit[neighbor.name][0]) == len(new_path):
+                                if sum(
+                                    int(
+                                        self.map.get_zone(zone).zone_type
+                                        == "priority"
+                                    )
+                                    for zone in new_path
+                                ) > sum(
+                                    int(
+                                        self.map.get_zone(zone).zone_type
+                                        == "priority"
+                                    )
+                                    for zone in visit[neighbor.name][0]
+                                ):
+                                    visit[neighbor.name] = (
+                                        new_path,
+                                        len(new_path),
+                                    )
+
+                                    root_path[index].append(new_path)
+                        else:
+                            root_path[1].append(path + [path[-1]])
                     else:
                         root_path[1].append(path + [path[-1]])
 
@@ -113,9 +129,6 @@ class Drone:
             if finis:
                 break
             root_path = root_path[1:] + [[]]
-            print(f"{len(act_turn)=}")
-
-        print(f"{visit=} final")
 
         return visit[self.map.end][0]
 
@@ -123,19 +136,28 @@ class Drone:
         print("reconstruct", path)
 
         prec_zone: Zone | None = None
+        cone: Connection | None = None
 
         for i, zone in enumerate(path):
             real_zone = self.map.get_zone(zone)
             real_zone.drone_in_turn[i:] = [
                 a + 1 for a in real_zone.drone_in_turn[i:]
             ]
-            self.map.get_zone(zone).check_capacity
             if prec_zone is not None:
+                cone = self.map.get_conextion(prec_zone.name, real_zone.name)
+                if cone is not None:
+                    print_connection(cone)
                 prec_zone.drone_in_turn[i:] = [
                     a - 1 for a in prec_zone.drone_in_turn[i:]
                 ]
+                if cone is not None and prec_zone.name != real_zone.name:
+                    cone.ocupation_list[i] += 1
+
             prec_zone = real_zone
+
         self.path = [self.map.get_zone(name) for name in path]
+
+        print("post")
 
     def move(self, turn: int) -> None:
 
