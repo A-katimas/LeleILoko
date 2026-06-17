@@ -41,7 +41,6 @@ class Base_Zone(ABC):
         )
         ray.draw_cube_v(self.pos, tuple(self.size), self.what_color())
 
-
     def what_color(self) -> ray.Color:
         if self.zone.color in THEME_COLOR:
             return ray.Color(

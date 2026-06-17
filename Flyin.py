@@ -72,7 +72,9 @@ def main() -> None:
             ray.begin_mode_3d(camera)
 
             timer_next = time.time()
-            loop_begin3d(window, time.time() - start, timer_next - timer,camera)
+            loop_begin3d(
+                window, time.time() - start, timer_next - timer, camera
+            )
             timer = timer_next
 
             ray.draw_cube_wires(Vector3(0, 0, 0), 2.0, 2.0, 2.0, ray.BLACK)
@@ -80,9 +82,9 @@ def main() -> None:
             draw_ax_line()
 
             ray.end_mode_3d()
-            
+
             loop_begin2d(window, camera)
-            
+
             ray.end_drawing()
 
         ray.close_window()
