@@ -80,6 +80,17 @@ class MapData(BaseModel):
             else:
                 deja_vu.add(tuple(zone.pos))
 
+    def no_connec_doble(self) -> None:
+        deja_vu = set()
+        for connec in self.connections:
+            if (connec.a, connec.b) in deja_vu:
+                raise ValueError(
+                    color(f"2 conect is the same :  {connec}", 250, 50, 50)
+                )
+            else:
+                deja_vu.add((connec.a, connec.b))
+        print(deja_vu)
+
     def model_post_init(self, __context: IncEx) -> None:
         self.get_zone(self.start).max_drones = self.nb_drones
         self.get_zone(self.end).max_drones = self.nb_drones
@@ -103,9 +114,9 @@ class MapData(BaseModel):
     ) -> Connection | None:
 
         for i in self.connections:
-            if (i.a == zone_name_a and i.b == zone_name_b):
+            if i.a == zone_name_a and i.b == zone_name_b:
                 return i
-            if (i.a == zone_name_b and i.b == zone_name_a):  # bidirectionnel
+            if i.a == zone_name_b and i.b == zone_name_a:  # bidirectionnel
                 return i
         return None
 
@@ -176,12 +187,14 @@ def parse_connection(line: str, line_no: int) -> Connection:
         else:
             main = rest
             metadata = {}
-
         a, b = main.strip().split("-")
+        sorted_connect: list[str] = [a.strip(), b.strip()]
 
         capacity = int(metadata.get("max_link_capacity", 1))
-
-        return Connection(a=a.strip(), b=b.strip(), capacity=capacity)
+        sorted_connect.sort()
+        return Connection(
+            a=sorted_connect[0], b=sorted_connect[1], capacity=capacity
+        )
 
     except Exception as e:
         raise ValueError(
@@ -252,5 +265,5 @@ def parse_file(path: str) -> MapData:
     )
 
     finish.no_pos_doble()
-
+    finish.no_connec_doble()
     return finish

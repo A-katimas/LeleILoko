@@ -130,14 +130,16 @@ class Drone:
                 break
             root_path = root_path[1:] + [[]]
 
-        return visit[self.map.end][0]
+        try:
+            return visit[self.map.end][0]
+        except KeyError:
+            return visit[self.map.start][0]
 
     def reconstruct_path(self, path: list[str]) -> None:
-        print("reconstruct", path)
+        print("path", path)
 
         prec_zone: Zone | None = None
         cone: Connection | None = None
-
         for i, zone in enumerate(path):
             real_zone = self.map.get_zone(zone)
             real_zone.drone_in_turn[i:] = [
@@ -145,8 +147,6 @@ class Drone:
             ]
             if prec_zone is not None:
                 cone = self.map.get_conextion(prec_zone.name, real_zone.name)
-                if cone is not None:
-                    print_connection(cone)
                 prec_zone.drone_in_turn[i:] = [
                     a - 1 for a in prec_zone.drone_in_turn[i:]
                 ]
@@ -157,12 +157,14 @@ class Drone:
 
         self.path = [self.map.get_zone(name) for name in path]
 
-        print("post")
-
     def move(self, turn: int) -> None:
 
         self.drone_moved = False
-        if turn >= len(self.path):
+        if len(self.path) == 1:
+            print(f"drone {self.id_drone} can't moved")
+            self.drone_finished = True
+
+        elif turn >= len(self.path):
             self.prec_pos = self.pos_xyz
             print(f"drone {self.id_drone} arrived ")
             self.drone_finished = True

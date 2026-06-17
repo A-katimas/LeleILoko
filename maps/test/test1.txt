@@ -1,22 +1,27 @@
 nb_drones: 30
 
 start_hub: start 0 0 [color=null max_drones=12]
-hub: maze_loop1 1 0 [color=red max_drones=2]
+hub: maze_loop1 1 0 [color=red max_drones=1]
 hub: maze_loop2 2 0 [zone=restricted color=purple max_drones=3]
 hub: maze_loop3 3 0 [zone=restricted color=green max_drones=4]
 hub: maze_loop4 4 0 [zone=restricted color=black max_drones=5]
 hub: maze_loop5 5 0 [zone=restricted color=brown max_drones=6]
 hub: maze_loop6 6 0 [zone=restricted color=orange max_drones=7]
 hub: maze_loop7 7 0 [zone=restricted color=maroon max_drones=8]
-hub: maze_loop8 8 0 [zone=restricted color=gold max_drones=9]
+hub: maze_loop8 8 1 [zone=restricted color=gold max_drones=9]
 hub: maze_loop9 9 0 [zone=restricted color=darkred max_drones=10]
-hub: maze_loop10 10 0 [zone=restricted color=violet max_drones=11]
-hub: maze_fuze 15 15 [color=yellow]
+hub: maze_loop11 9 1 [zone=restricted color=darkred max_drones=10]
+hub: maze_loop10 10 0 [zone=restricted color=violet max_drones=1]
+hub: maze_fuze 15 15 [color=yellow max_drones=2]
 hub: maze_loop12 11 0 [zone=restricted color=blue]
 end_hub: goal 12 0 [color=transpa max_drones=15]
 
 connection: start-maze_loop7
-connection: start-maze_loop8
-connection: start-maze_loop1
-connection: maze_loop1-maze_fuze
-connection: maze_fuze-goal
+connection: start-maze_loop8  [max_link_capacity=2]
+connection: maze_fuze-maze_loop8
+connection: maze_loop8-goal
+connection: maze_loop9-maze_loop10 
+connection: maze_loop10-maze_loop9 
+connection: start-maze_loop1[max_link_capacity=1]
+connection: maze_loop1-maze_fuze[max_link_capacity=4]
+connection: maze_fuze-goal[max_link_capacity=4]
