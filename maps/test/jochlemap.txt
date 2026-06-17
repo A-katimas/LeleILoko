@@ -1,7 +1,7 @@
 # ==========================================
 # CONFIGURATION GÉNÉRALE
 # ==========================================
-nb_drones: 100
+nb_drones: 60
 
 # Points d'entrée et de sortie uniques
 start_hub: super_base_start -2 13 [color=green]

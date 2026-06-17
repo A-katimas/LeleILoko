@@ -1,6 +1,7 @@
 import pyray as ray
 from pyray import Vector3, Model
 from parthing import MapData
+from algo.pathfind import print_zone
 from draw.draw_drone import Drone, DroneDrawer
 from draw.draw_zone import printable_zone, printable_Wire
 
@@ -67,6 +68,7 @@ class WindowUse:
         self.wire = printable_Wire(self.mapdata.connections, self.zone)
         self.skybase = Skybase(sky_texture)
         self.floorbase = Floor(floor_texture)
+        self.print_name_zone: bool = False
 
     def drone_init(self) -> None:
         for i in range(self.mapdata.nb_drones):
@@ -74,8 +76,6 @@ class WindowUse:
             self.drones_logique.append(drone)
         for e in self.drones_logique:
             self.drones_drowers.append(DroneDrawer(e))
-
-        print("\nfin simu\n ")
 
     def draw_zone_wire(self) -> None:
         for i in self.zone:
@@ -100,7 +100,45 @@ def loop_mouv_drone(window: WindowUse, turn: int) -> bool:
     return False
 
 
-def loop_begin3d(window: WindowUse, move_delta: float, delta: float) -> None:
+def loop_begin2d(window: WindowUse, camera: ray.Camera3D) -> None:
+    r = ray.get_screen_to_world_ray(ray.get_mouse_position(), camera)
+    if ray.is_mouse_button_pressed(ray.MouseButton(0)):
+
+        for hub in window.zone:
+            raycast = ray.get_ray_collision_box(r, hub.bondingbox)
+            if raycast.hit:
+                print_zone(hub.zone)
+                break
+
+    if ray.is_mouse_button_pressed(ray.MouseButton(1)):
+
+        window.print_name_zone = not window.print_name_zone
+
+    if window.print_name_zone:
+        for hub in window.zone:
+
+            pos_3d = ray.Vector3(hub.pos[0], hub.pos[1], hub.pos[2])
+            pos_2d = ray.get_world_to_screen(pos_3d, camera)
+            zone_dir = (
+                hub.pos[0] - r.position.x,
+                hub.pos[1] - r.position.y,
+                hub.pos[2] - r.position.z,
+            )
+            dot = (
+                zone_dir[0] * r.direction.x
+                + zone_dir[1] * r.direction.y
+                + zone_dir[2] * r.direction.z
+            )
+            if dot < 0:
+                continue
+            ray.draw_text(
+                hub.zone.name, int(pos_2d.x), int(pos_2d.y), 20, ray.WHITE
+            )
+
+
+def loop_begin3d(
+    window: WindowUse, move_delta: float, delta: float, camera: ray.Camera3D
+) -> None:
     window.draw_evironement()
     window.draw_zone_wire()
 

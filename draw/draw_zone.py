@@ -20,6 +20,18 @@ class Base_Zone(ABC):
             max(log2(max(log2(zone.max_drones), 0.5)), 0.5),
             max(log2(max(log2(zone.max_drones), 0.5)), 0.5),
         )
+        self.bondingbox = ray.BoundingBox(
+            Vector3(
+                pos[0] - self.size[0] / 2,
+                pos[1] - self.size[1] / 2,
+                pos[2] - self.size[2] / 2,
+            ),  # coin MIN
+            Vector3(
+                pos[0] + self.size[0] / 2,
+                pos[1] + self.size[1] / 2,
+                pos[2] + self.size[2] / 2,
+            ),  # coin MAX
+        )
 
     def drawzone(self) -> None:
         ray.draw_cube_wires_v(
@@ -28,6 +40,7 @@ class Base_Zone(ABC):
             self.TYPE_COLOR,
         )
         ray.draw_cube_v(self.pos, tuple(self.size), self.what_color())
+
 
     def what_color(self) -> ray.Color:
         if self.zone.color in THEME_COLOR:

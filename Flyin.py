@@ -28,7 +28,12 @@ def main() -> None:
         ray.init_window(1920, 1200, "Fly-in")
         ray.set_target_fps(60)
 
-        from draw.draw_window import WindowUse, loop_begin3d, loop_mouv_drone
+        from draw.draw_window import (
+            WindowUse,
+            loop_begin3d,
+            loop_mouv_drone,
+            loop_begin2d,
+        )
 
         camera = Camera3D(
             Vector3(10, 5, 10),  # position caméra
@@ -67,7 +72,7 @@ def main() -> None:
             ray.begin_mode_3d(camera)
 
             timer_next = time.time()
-            loop_begin3d(window, time.time() - start, timer_next - timer)
+            loop_begin3d(window, time.time() - start, timer_next - timer,camera)
             timer = timer_next
 
             ray.draw_cube_wires(Vector3(0, 0, 0), 2.0, 2.0, 2.0, ray.BLACK)
@@ -75,7 +80,9 @@ def main() -> None:
             draw_ax_line()
 
             ray.end_mode_3d()
-
+            
+            loop_begin2d(window, camera)
+            
             ray.end_drawing()
 
         ray.close_window()
