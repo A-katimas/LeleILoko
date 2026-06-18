@@ -12,12 +12,20 @@ def draw_ax_line() -> None:
     ray.draw_line_3d(Vector3(0, 0, 0), Vector3(0, 0, 20), ray.BLUE)
 
 
-def key_pressed() -> None:
+def key_pressed() -> int:
     if ray.is_key_pressed(ray.KeyboardKey.KEY_TAB):
         if ray.is_cursor_hidden():
             ray.enable_cursor()
         else:
             ray.disable_cursor()
+    if ray.is_key_pressed(ray.KeyboardKey.KEY_P):
+        return 1
+    if ray.is_key_pressed(ray.KeyboardKey.KEY_LEFT):
+        return 2
+    if ray.is_key_pressed(ray.KeyboardKey.KEY_RIGHT):
+        return 3
+
+    return 0
 
 
 def main() -> None:
@@ -53,17 +61,33 @@ def main() -> None:
         turn = 0
         print("\n\n\n")
         finish = False
+        ray.disable_cursor()
+        # ray.toggle_fullscreen()
+        paused = False
         while not ray.window_should_close():
             ray.update_camera(camera, ray.CameraMode.CAMERA_FREE)
+            res = key_pressed()
+            match (res):
+                case 1:
+                    paused = not paused
+                case 2:
+                    turn -= 1
 
-            key_pressed()
+                    if turn < 0:
+                        turn += 1
+                    finish = False
+                case 3:
+                    turn += 1
+                    if turn > len(window.drones_logique[-1].path):
+                        turn -= 1
             if time.time() - start > 1 and not finish:
                 start = time.time()
                 print(chose_color(f"\tturn {turn}", turn % 30))
                 finish = loop_mouv_drone(window, turn)
-                if finish:
+                if not paused and finish:
                     print(f"\t\tend with : {turn} trun")
-                turn += 1
+                if not paused:
+                    turn += 1
 
             ray.begin_drawing()
 

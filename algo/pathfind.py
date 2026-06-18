@@ -159,6 +159,7 @@ class Drone:
 
     def move(self, turn: int) -> None:
 
+        self.drone_finished = False
         self.drone_moved = False
         if len(self.path) == 1:
             print(f"drone {self.id_drone} can't moved")
