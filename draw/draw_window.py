@@ -141,7 +141,7 @@ def loop_begin3d(
 ) -> None:
     window.draw_evironement()
     window.draw_zone_wire()
-
     for i in window.drones_drowers:
         i.lerp(move_delta)
+
         i.drawdrone(delta)

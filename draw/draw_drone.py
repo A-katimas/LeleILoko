@@ -8,6 +8,15 @@ import random
 class DroneDrawer:
 
     model = ray.load_model("model_use/drone/scene.gltf")
+    model2 = ray.load_model("model_use/drone_spe/scene.gltf")
+    anim_count = ray.ffi.new("int *")  # compteur d'animations
+    anims = ray.load_model_animations(
+        "model_use/drone_spe/scene.gltf", anim_count
+    )
+    mod = [model, model2]
+
+    anim_frame = 0
+    anim_index = 1
 
     def __init__(self, drone: Drone) -> None:
         self.pos: Pos3d = Pos3d(
@@ -36,12 +45,29 @@ class DroneDrawer:
         self.idle_stade = 0
         self.idle_pos = Pos3d(0, 0, 0)
 
+        total = self.anim_count[0]
+        self.anim_index = min(2, total - 1)
+        print(f"anim_count = {self.anim_count[0]}")  # combien ?
+        print(f"anim_index = {self.anim_index}")
+
     def lerp(self, delta: float) -> None:
         """delta = proportion de 0 a 1 entre prec frame et new frame"""
 
         delta *= random.uniform(0.9, 1.1)
         diff = (self.drone.pos_xyz - self.drone.prec_pos) * delta
         self.wated_pos = (self.drone.prec_pos + diff) * 4
+
+    @classmethod
+    def update_anim(cls) -> None:
+        """À appeler UNE SEULE FOIS par frame, pas dans chaque drone"""
+
+        cls.anim_frame += 1
+
+        if cls.anim_frame >= cls.anims[cls.anim_index].frameCount:
+            cls.anim_frame = 0
+        ray.update_model_animation(
+            cls.model2, cls.anims[cls.anim_index], cls.anim_frame
+        )
 
     def update_pos(self, delta_t: float) -> None:
         delta_t = 0.016
@@ -73,17 +99,23 @@ class DroneDrawer:
         return self.idle_pos
 
     def drawdrone(self, delta_t: float) -> None:
-        self.update_pos(delta_t)
-        # offset: tuple[float, float, float] = (
-        #     (0.0, next(self.wait, 0.0), 0.0)
-        #     if self.is_idle
-        #     else (0.0, 0.0, 0.0)
-        # )
-        ray.draw_model_ex(
-            self.model,
-            list(self.pos),
-            list(self.ax),
-            280,
-            (0.3, 0.3, 0.3),
-            self.tint,
-        )
+        self.update_pos(delta_t)  # self.anim_frame += 1
+
+        if self.drone.id_drone % 2:
+            ray.draw_model_ex(
+                self.mod[0],
+                list(self.pos),
+                list(self.ax),
+                280,
+                (0.3, 0.3, 0.3),
+                self.tint,
+            )
+        else:
+            ray.draw_model_ex(
+                self.mod[1],
+                list(self.pos),
+                list(self.ax),
+                90,
+                (0.015, 0.015, 0.015),
+                self.tint,
+            )
