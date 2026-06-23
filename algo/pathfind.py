@@ -33,6 +33,11 @@ class Drone:
         self.reconstruct_path(self.algo_nodes())
         self.drone_moved = False
         self.drone_finished = False
+        print(
+            chose_color(f"\ndrone {self.id_drone} path ", self.id_drone % 30)
+        )
+        for i in self.path:
+            print(i.name, end=" ")
 
     def find_act_zone_start(self) -> tuple[int, int]:
         zone = next(e for e in self.map.zones if self.map.start == e.name)
@@ -48,10 +53,6 @@ class Drone:
 
     def algo_nodes(self) -> list[str]:
         print()
-        print(
-            "path for",
-            chose_color(f"drone{self.id_drone}", self.id_drone % 30),
-        )
         visit = {self.act_zone.name: ([self.act_zone.name], 1)}
         root_path: list[list[list[str]]] = [[[self.act_zone.name]], [], []]
         finis = False
@@ -136,8 +137,6 @@ class Drone:
             return visit[self.map.start][0]
 
     def reconstruct_path(self, path: list[str]) -> None:
-        print("path", path)
-
         prec_zone: Zone | None = None
         cone: Connection | None = None
         for i, zone in enumerate(path):
@@ -167,14 +166,13 @@ class Drone:
 
         elif turn >= len(self.path):
             self.prec_pos = self.pos_xyz
+            self.pos_xyz = Pos3d(self.map.get_zone(self.map.end).pos)
             print(f"drone {self.id_drone} arrived ")
             self.drone_finished = True
 
         elif len(self.path) > turn:
             if self.path:
-                print(chose_color("drone path ", self.id_drone % 30))
-                for i in self.path:
-                    print(i.name, end=" ")
+
                 if not len(self.path) == 1:
                     print(
                         chose_color(

@@ -40,15 +40,13 @@ class DroneDrawer:
             0.0,
             random.uniform(-1.0, 1.0),
         )
-        # self.tint = random.choice([a for a in THEME_COLOR.values()])
+
         self.tint = list(THEME_COLOR.values())[self.drone.id_drone % 30]
         self.idle_stade = 0
         self.idle_pos = Pos3d(0, 0, 0)
 
         total = self.anim_count[0]
         self.anim_index = min(2, total - 1)
-        print(f"anim_count = {self.anim_count[0]}")  # combien ?
-        print(f"anim_index = {self.anim_index}")
 
     def lerp(self, delta: float) -> None:
         """delta = proportion de 0 a 1 entre prec frame et new frame"""

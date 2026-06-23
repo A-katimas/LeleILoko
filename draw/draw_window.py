@@ -78,6 +78,7 @@ class WindowUse:
             self.drones_drowers.append(DroneDrawer(e))
 
     def draw_zone_wire(self) -> None:
+        # DroneDrawer.update_anim()
         for i in self.zone:
             i.drawzone()
         for e in self.wire:
