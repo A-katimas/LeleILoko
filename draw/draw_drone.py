@@ -68,6 +68,10 @@ class DroneDrawer:
         )
 
     def update_pos(self, delta_t: float) -> None:
+        """
+        Update the drone's position based on its speed, acceleration,
+        and desired position.
+        """
         delta_t = 0.016
         friction = 0.3  # [0, 1]
         # print(friction)
@@ -89,6 +93,10 @@ class DroneDrawer:
         self.acceleration = new_accel
 
     def idle(self) -> Pos3d:
+        """
+        Generate a small random idle movement for the drone
+        to simulate hovering.
+        """
         self.idle_pos = (self.idle_pos * 0.99) + Pos3d(
             random.uniform(0.01, -0.01),
             random.uniform(0.01, -0.01),
@@ -97,6 +105,10 @@ class DroneDrawer:
         return self.idle_pos
 
     def drawdrone(self, delta_t: float) -> None:
+        """
+        Draw the drone model at its current position and
+        orientation.
+        """
         self.update_pos(delta_t)  # self.anim_frame += 1
 
         if self.drone.id_drone % 2:

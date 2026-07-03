@@ -34,6 +34,9 @@ class Base_Zone(ABC):
         )
 
     def drawzone(self) -> None:
+        """
+        Draw the zone in the 3D space, including its bounding box and color.
+        """
         ray.draw_cube_wires_v(
             self.pos,
             tuple(self.size * 1.2),
@@ -42,6 +45,9 @@ class Base_Zone(ABC):
         ray.draw_cube_v(self.pos, tuple(self.size), self.what_color())
 
     def what_color(self) -> ray.Color:
+        """
+        Determine the color of the zone based on its type and theme.
+        """
         if self.zone.color in THEME_COLOR:
             return ray.Color(
                 THEME_COLOR[str(self.zone.color)][0],
@@ -53,9 +59,12 @@ class Base_Zone(ABC):
             return self.rainbow_color()
 
     def rainbow_color(self) -> ray.Color:
+        """
+        Generate a color that cycles through the spectrum based on
+        time and position.
+        """
         import time
 
-        """Génère une couleur qui cycle dans le spectre."""
         hue = ((time.time() * 60) + self.pos[0]) % 360  # 60° par seconde
         return ray.color_from_hsv(hue, 1.0, 1.0)
 
@@ -91,6 +100,10 @@ class Priority_Zone(Base_Zone):
 
 # "blocked", "restricted", "priority
 def printable_zone(zone: list[Zone]) -> list[Base_Zone]:
+    """
+    Convert a list of Zone objects into a list of Base_Zone objects
+    with appropriate types and positions for rendering in 3D space.
+    """
     zone_print: list[Base_Zone] = []
     j: int = 0
     for i in zone:
@@ -128,6 +141,10 @@ class Wire:
         self.mesh_gen()
 
     def find_base_zone(self) -> tuple[Base_Zone, Base_Zone]:
+        """
+        Find the two Base_Zone objects corresponding to the
+        connection's endpoints.
+        """
         zone_a = next(
             e for e in self.zone_list if self.connection.a == e.zone.name
         )
@@ -137,6 +154,9 @@ class Wire:
         return (zone_a, zone_b)
 
     def mesh_gen(self) -> None:
+        """
+        Generate a cylindrical mesh representing the wire between two zones.
+        """
         # lenght = ray.vector3_distance(self.cible_pos_1, self.cible_pos_2)
         diff = Pos3d(self.cible_pos_1) - Pos3d(self.cible_pos_2)
         lenght = hypot(*diff) * 2
@@ -148,6 +168,9 @@ class Wire:
         self.model = ray.load_model_from_mesh(self.mesh)
 
     def drawwire(self) -> None:
+        """
+        Draw the wire model between two zones in the 3D space.
+        """
         ray.draw_model_ex(
             self.model,
             tuple(self.cible_pos_2),
@@ -165,6 +188,10 @@ class Wire:
 def printable_Wire(
     connection: list[Connection], zone_list: list[Base_Zone]
 ) -> list[Wire]:
+    """
+    Convert a list of Connection objects into a list of Wire
+    objects for rendering in 3D space.
+    """
     wire_print: list[Wire] = []
     for i in connection:
         wire_print.append(Wire(i, zone_list))

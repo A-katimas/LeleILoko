@@ -4,6 +4,9 @@ from use_terminal.vector import Pos3d
 
 
 def print_zone(zone: Zone) -> None:
+    """
+    Display all information for a zone
+    """
     print()
     print(f"name: {zone.name}")
     print(f"x: {zone.x}")
@@ -16,6 +19,9 @@ def print_zone(zone: Zone) -> None:
 
 
 def print_connection(conex: Connection) -> None:
+    """
+    Display all information for a connection
+    """
     print(f"a : {conex.a}")
     print(f"b : {conex.b}")
     print(f"capacity : {conex.capacity}")
@@ -40,18 +46,32 @@ class Drone:
             print(i.name, end=" ")
 
     def find_act_zone_start(self) -> tuple[int, int]:
+        """
+        Find the starting zone's coordinates.
+        """
         zone = next(e for e in self.map.zones if self.map.start == e.name)
         return (zone.x, zone.y)
 
     def print_all_zone(self) -> None:
+        """
+        Print all zones in the map.
+        """
         for i in self.map.zones:
             print_zone(i)
 
     def print_all_connection(self) -> None:
+        """
+        Print all connections in the map.
+        """
         for i in self.map.connections:
             print_connection(i)
 
     def algo_nodes(self) -> list[str]:
+        """
+        Find the shortest path from the starting zone to the ending zone.
+        like a DFS algorithm with some constraints on the capacity of zones
+        and connections.
+        """
         print()
         visit = {self.act_zone.name: ([self.act_zone.name], 1)}
         root_path: list[list[list[str]]] = [[[self.act_zone.name]], [], []]
@@ -137,6 +157,10 @@ class Drone:
             return visit[self.map.start][0]
 
     def reconstruct_path(self, path: list[str]) -> None:
+        """
+        Reconstruct the path for the drone and update the occupation of zones
+        and connections.
+        """
         prec_zone: Zone | None = None
         cone: Connection | None = None
         for i, zone in enumerate(path):
@@ -157,7 +181,10 @@ class Drone:
         self.path = [self.map.get_zone(name) for name in path]
 
     def move(self, turn: int) -> None:
-
+        """
+        Move the drone along its path based on the current turn.
+        and update its position and status (moved or finished).
+        """
         self.drone_finished = False
         self.drone_moved = False
         if len(self.path) == 1:
