@@ -19,6 +19,9 @@ class Zone(BaseModel):
 
     @field_validator("zone_type")
     def check_zone_type(cls, value: str) -> str:
+        """
+        Validate that the zone_type is one of the valid types.
+        """
         if value not in VALID_ZONE_TYPES:
             raise ValueError(
                 color(f"Invalid zone type: {value}", 250, 100, 100)
@@ -27,15 +30,24 @@ class Zone(BaseModel):
 
     @field_validator("max_drones")
     def check_capacity(cls, value: int) -> int:
+        """
+        Validate that the max_drones is a positive integer.
+        """
         if value <= 0:
             raise ValueError(color("max_drones must be > 0", 250, 100, 100))
         return value
 
     @property
     def pos(self) -> list[int]:
+        """
+        Return the position of the zone as a list of coordinates [x, y, z].
+        """
         return [self.x, self.y, self.z]
 
     def capacity_is_valid(self, turn: int) -> bool:
+        """
+        Check if the number of drones in the zone for a given turn
+        """
         return self.drone_in_turn[turn] < self.max_drones
 
 
@@ -48,16 +60,25 @@ class Connection(BaseModel):
 
     @field_validator("capacity")
     def check_capacity(cls, value: int) -> int:
+        """
+        Validate that the capacity is a positive integer.
+        """
         if value <= 0:
             raise ValueError(color("capacity must be > 0", 240, 150, 150))
         return value
 
     def find_zone(self, zones: list[Zone]) -> tuple[Zone, Zone]:
+        """
+        Find the two Zone objects corresponding to the connection's endpoints.
+        """
         zone_a = next(e for e in zones if self.a == e.name)
         zone_b = next(e for e in zones if self.b == e.name)
         return (zone_a, zone_b)
 
     def capacity_is_valid(self, turn: int) -> bool:
+        """
+        Check if the capacity of the connection is valid for a given turn.
+        """
         return self.ocupation_list[turn] < self.capacity
 
 
@@ -71,6 +92,9 @@ class MapData(BaseModel):
     end: str
 
     def no_pos_doble(self) -> None:
+        """
+        Check for duplicate positions in the zones.
+        """
         deja_vu = set()
         for zone in self.zones:
             if tuple(zone.pos) in deja_vu:
@@ -81,6 +105,9 @@ class MapData(BaseModel):
                 deja_vu.add(tuple(zone.pos))
 
     def no_connec_doble(self) -> None:
+        """
+        Check for duplicate connections in the map.
+        """
         deja_vu = set()
         for connec in self.connections:
             if (connec.a, connec.b) in deja_vu:
@@ -92,16 +119,25 @@ class MapData(BaseModel):
         print(deja_vu)
 
     def model_post_init(self, __context: IncEx) -> None:
+        """
+        Initialize the map data after the model is created.
+        """
         self.get_zone(self.start).max_drones = self.nb_drones
         self.get_zone(self.end).max_drones = self.nb_drones
 
     def append_turn(self) -> None:
+        """
+        Append a new turn to the map data.
+        """
         for i in self.zones:
             i.drone_in_turn.append(i.drone_in_turn[-1])
         for j in self.connections:
             j.ocupation_list.append(0)
 
     def get_zone(self, name: str | None) -> Zone | Any:
+        """
+        Get a zone by its name.
+        """
         if not name:
             return None
         for z in self.zones:
@@ -112,7 +148,9 @@ class MapData(BaseModel):
     def get_conextion(
         self, zone_name_a: str, zone_name_b: str
     ) -> Connection | None:
-
+        """
+        Find a connection between two zones.
+        """
         for i in self.connections:
             if i.a == zone_name_a and i.b == zone_name_b:
                 return i
@@ -121,6 +159,9 @@ class MapData(BaseModel):
         return None
 
     def get_neighbors(self, zone_name: str) -> list[Zone]:
+        """
+        Get a list of neighboring zones for a given zone name.
+        """
         zones: list[Zone] = []
         seen: set[str] = set()
         for i in self.connections:
@@ -134,6 +175,10 @@ class MapData(BaseModel):
 
 
 def parse_metadata(raw: str) -> Dict[str, str]:
+    """
+    Parse the metadata from a string and return
+    a dictionary of key-value pairs.
+    """
     data: dict[str, str] = {}
 
     raw = raw.strip()[1:-1]  # enlever [ ]
@@ -147,6 +192,9 @@ def parse_metadata(raw: str) -> Dict[str, str]:
 
 
 def parse_zone(line: str, line_no: int) -> tuple[str, Zone]:
+    """
+    Parse a line defining a zone and return the prefix and Zone object.
+    """
     try:
         prefix, rest = line.split(":", 1)
         parts = rest.strip().split()
@@ -178,6 +226,9 @@ def parse_zone(line: str, line_no: int) -> tuple[str, Zone]:
 
 
 def parse_connection(line: str, line_no: int) -> Connection:
+    """
+    Parse a line defining a connection and return a Connection object.
+    """
     try:
         _, rest = line.split(":", 1)
 
@@ -203,6 +254,9 @@ def parse_connection(line: str, line_no: int) -> Connection:
 
 
 def parse_file(path: str) -> MapData:
+    """
+    Parse a map file and return a MapData object containing zones,
+    connections, and other relevant information."""
     zones: list[Zone] = []
     connections: list[Connection] = []
     zone_names: set[str] = set()  # ← pour les checks de doublons/validations

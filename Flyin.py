@@ -7,12 +7,18 @@ from use_terminal.color import chose_color
 
 
 def draw_ax_line() -> None:
+    """
+    Draw the X, Y, and Z axes in 3D space with different colors.
+    """
     ray.draw_line_3d(Vector3(0, 0, 0), Vector3(20, 0, 0), ray.RED)
     ray.draw_line_3d(Vector3(0, 0, 0), Vector3(0, 20, 0), ray.GREEN)
     ray.draw_line_3d(Vector3(0, 0, 0), Vector3(0, 0, 20), ray.BLUE)
 
 
 def key_pressed() -> int:
+    """
+    Check for specific key presses and return corresponding integer codes.
+    """
     if ray.is_key_pressed(ray.KeyboardKey.KEY_TAB):
         if ray.is_cursor_hidden():
             ray.enable_cursor()
