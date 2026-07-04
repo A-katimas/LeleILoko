@@ -82,34 +82,55 @@ Then launch with:
 ```bash
 make run
 ```
+# 📚 Resources
 
-• An “Instructions” section containing any relevant information about compilation,
-installation, and/or execution.
-• A “Resources” section listing classic references related to the topic (documentation, articles, tutorials, etc.), as well as a description of how AI was used —
-specifying for which tasks and which parts of the project.
-➠ Additional sections may be required depending on the project (e.g., usage
-examples, feature list, technical choices, etc.).
+## 📖 References
 
-# Resources
+### 🎮 Library
 
-## 📚 References
+<p align="center">
+  <img src="https://www.raylib.com/common/img/raylib_logo.png" alt="Raylib Logo" width="220">
+</p>
 
-- [Reference / documentation 1 — e.g. official library docs used]
-- [Reference / documentation 2 — e.g. tutorial or article followed]
-- [Reference / documentation 3 — e.g. 42 subject or course material]
+This project uses **Pyray**, the Python bindings for **Raylib**, a lightweight and beginner-friendly game development library.
+
+I chose Raylib because its API is available in several programming languages, making the concepts and techniques learned during this project transferable to future projects, regardless of the language used.
+
+| Resource | Link |
+|---|---|
+| 🌐 Raylib | [raylib.com](https://www.raylib.com/) |
+| 🐍 Pyray | [github.com/electronstudio/raylib-python-cffi](https://github.com/electronstudio/raylib-python-cffi) |
+
+### 🚁 3D Assets
+
+The two drone models used in this project were downloaded from **Sketchfab**.
+
+| Resource | Link |
+|---|---|
+| 🎨 Sketchfab | [sketchfab.com](https://sketchfab.com/) |
+
+### 🌍 Environment Assets
+
+The ground model and the skybox textures were obtained from **TextureLab**.
+
+| Resource | Link |
+|---|---|
+| 🖼️ TextureLab | [texturelabs.org](https://texturelabs.org/) |
+
 
 ## 🤖 AI Usage
 
-AI (Claude) was used during this project for the following tasks:
+AI was used during this project for the following tasks:
 
-- [e.g. Drafting and formatting this README]
-- [e.g. Debugging a specific rendering/movement issue]
-- [e.g. Explaining a concept related to the 3D engine / physics]
+| Tool | Task |
+|---|---|
+| 🧠 **Claude** | Helping with the friction calculations for the drone physics |
+| 💬 **ChatGPT** | Guiding research and pointing towards relevant documentation/concepts |
 
-No AI-generated code was used for [specify the parts kept fully manual, if relevant].
+No AI-generated code was used for [specify the parts kept fully manual, if relevant — e.g. rendering logic, input handling, map generation].
 
 # Features
 
-- [Feature 1 — e.g. Real-time flight simulation with smooth controls]
-- [Feature 2 — e.g. Multiple difficulty maps: easy, medium, hard, challenger]
-- [Feature 3 — e.g. Custom asset loading via command line or config]
+- 🎮 **3D visuals** — the whole simulation is rendered in 3D using Raylib/Pyray
+- 🌬️ **Friction system** — drone physics include a friction model for realistic movement
+- 🛠️ **Fully customizable** — maps, assets, and configuration can be entirely customized to fit your own setup
